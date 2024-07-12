@@ -1,0 +1,53 @@
+#!/bin/sh
+
+myname=${0##*/}
+
+show_usage () {
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} [tweak] | [preview] | [help]"
+}
+
+show_help () {
+    printf '%s\n'   "${myname}: tweak the mount options of btrfs file systems"
+    show_usage
+    printf '%s\n'   "tweak"
+    printf '\t%s\n' "run the fstab tweak, you need the permissions tho, so run as root or with sudo"
+    printf '%s\n'   "preview"
+    printf '\t%s\n' "show what the result changes to your fstab will be without writing anything"
+    printf '%s\n'   "help"
+    printf '\t%s\n' "show this message, '-h' '-help' '--help' are also supported"
+    printf '%s\n'   "Rationale:"
+    printf '\t%s\n' "i am very opinionated with my fstab, i like to use btrfs for '/', '/home' and"
+    printf '\t%s\n' "other storage drives mounted directl to my computer."
+    printf '\t%s\n' "'noatime' improves performance by not registering acces time for inodes and"
+    printf '\t%s\n' "perhaps even reduces disc usage, maybe..."
+    printf '\t%s\n' "'compress=zstd:10' btrfs is one of the filesystems that support compression"
+    printf '\t%s\n' "it helps save space, which extra space or well more efficently used space"
+    printf '\t%s\n' "is never a bad idea, zstd may not be the best at speed or compression ratio"
+    printf '\t%s\n' "but it hits a sweet spot where at compression level 10 it will try to save"
+    printf '\t%s\n' "a lot of space without loosing much speed, is not the 'realtime' of levels"
+    printf '\t%s\n' "1 to 5 buuuut considerably faster than 11 to 15."
+}
+
+fstab_awk () {
+  awk '/btrfs/ { sub(/defaults/,"noatime,compress=zstd:10")} ; {print $0}' "$1"
+}
+
+case "$1" in
+  preview)
+    echo "fstab:"
+    fstab_awk /etc/fstab
+    ;;
+  tweak)
+    mv /etc/fstab /etc/old-fstab
+    fstab_awk /etc/old-fstab > /etc/fstab
+    ;;
+  help|-h|-help|--help)
+    show_help
+    ;;
+  *)
+    printf '%s\n' "${myname}: does not recognize the argument ${1}"
+    show_usage
+    exit 1
+    ;;
+esac

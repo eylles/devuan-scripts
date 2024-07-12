@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# yeh, really...
+# but if you are reading this then you are a degenerate too!
+
+install_dir=/tmp/discord-installer
+_update () {
+    mkdir -p "$install_dir"
+    # wget -c -P "$install_dir"/ --content-disposition "https://discord.com/api/download?platform=linux&format=deb"
+    wget -c -P "$install_dir"/ --content-disposition "https://discord.com/api/download/canary?platform=linux&format=deb"
+}
+
+_install () {
+    pkexec apt install "$install_dir"/discord-*.*.deb -y
+}
+
+_clean () {
+    rm "$install_dir"/discord-*.*.deb
+}
+
+_better () {
+    type betterdiscordctl || betterdiscordinstaller
+    betterdiscordctl -v reinstall
+}
+
+_upgrade () {
+    _clean
+    notify-send -i discord-canary "Downloading update"
+    _update
+    notify-send -i discord-canary "Installing update"
+    _install
+    notify-send -i discord-canary "Installed update"
+    # _better
+    _clean
+}
+
+case "$1" in
+    "update") _update ;;
+    "upgrade") _upgrade ;;
+    "install") _install ;;
+    "clean") _clean ;;
+    "better") _better ;;
+esac

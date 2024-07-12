@@ -1,0 +1,57 @@
+#!/bin/sh
+
+myname="${0##*/}"
+
+architechture=$(arch)
+
+fetch_keyrin (){
+  curl -fsSLo \
+    /usr/share/keyrings/brave-browser-archive-keyring.gpg \
+    https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+}
+
+add_sources () {
+  # if you are on an x86_64 system it is likely you will add the i386 arch
+  # to your system in order to install steam and wine
+  # with this that message about Skipping acquire of 'main/binary-i386/Packages'
+  # will not appear from the breave repo
+  if [ "$architechture" = "x86_64" ]; then
+    m_arch="arch=amd64"
+  else
+    m_arch=""
+  fi
+  signer="signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg"
+  url="https://brave-browser-apt-release.s3.brave.com/"
+  suite="stable main"
+  debsrc="deb [ ${m_arch} ${signer} ] ${url} ${suite}"
+  echo "$debsrc" \
+    | tee /etc/apt/sources.list.d/brave-browser-release.list
+}
+
+install_brave () {
+  apt update
+  apt install brave-browser -y
+}
+
+main () {
+  echo "${myname}: accquiring brave keyring"
+  fetch_keyrin
+  echo "${myname}: adding sources list to '/etc/apt/sources.list.d/brave-browser-release.list'"
+  add_sources
+  echo "${myname}: installing brave"
+  install_brave
+}
+
+
+case "$1" in
+  run)
+    main
+    ;;
+  install)
+    if [ ! "$( id -u )" -eq 0 ]; then
+      main
+    else
+      pkexec sudo "$0" "run"
+    fi
+    ;;
+esac

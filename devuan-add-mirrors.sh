@@ -47,6 +47,9 @@ print_deb_url () {
       printf '%s\n'     "deb http://${1}/merged ${dev_stab}-updates main contrib non-free non-free-firmware"
       printf '%s\n' "deb-src http://${1}/merged ${dev_stab}-updates main contrib non-free non-free-firmware"
       printf '\n'
+      printf '%s\n'     "deb http://${1}/merged ${dev_stab}-backports main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/merged ${dev_stab}-backports main contrib non-free non-free-firmware"
+      printf '\n'
       ;;
   esac
 }

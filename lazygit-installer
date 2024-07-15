@@ -1,0 +1,44 @@
+#!/bin/sh
+
+myname=${0##*/}
+
+TMPDIR="${TMPDIR:-/tmp}"
+cache_dir="$TMPDIR/lazygit_installer_$$"
+
+die() {
+    [ -n "$1" ] && printf '%s\n' "$*" >&2;
+    exit 1
+}
+
+cleanup() {
+    rm -rf -- "$cache_dir"
+}
+
+trap cleanup EXIT INT TERM
+
+
+echo "-- ${myname} --"
+echo "${myname}: fetching lazygit version"
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+echo "${myname}: will install lazygit version ${LAZYGIT_VERSION}"
+echo "${myname}: downloading..."
+
+url="https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+
+[ -d "$cache_dir" ] || mkdir -p -- "$cache_dir" || die "unable to create cache dir at ${cache_dir}"
+
+cd "$cache_dir" || die "could not cd to cache dir!"
+
+curl -Lo lazygit.tar.gz "${url}" || die "download failed!"
+
+echo "${myname}: installing..."
+tar xf lazygit.tar.gz lazygit || die "extraction failed!"
+# got root?
+if [ "$(id -u)" -eq 0 ]; then
+    install lazygit /usr/local/bin/
+else
+    sudo install lazygit /usr/local/bin/
+fi
+echo "${myname}: installation complete!"
+
+cd || die

@@ -28,12 +28,14 @@ print_deb_url () {
   case ${2} in
     unstable)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n' "deb http://${1}/merged ${dev_unst} main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/merged ${dev_unst} main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/merged ${dev_unst} main contrib non-free non-free-firmware"
       printf '\n'
       ;;
     testing)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n' "deb http://${1}/merged ${dev_test} main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/merged ${dev_test} main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/merged ${dev_test} main contrib non-free non-free-firmware"
       printf '\n'
       ;;
     stable)

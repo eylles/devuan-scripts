@@ -124,12 +124,12 @@ case ${1} in
           apt_sources "stable"
           ;;
         *)
-          printf '%s' "no valid suite choosen, choose from the current"
+          printf '%s' "no valid suite chosen, choose from the current"
           printf '%s\n' "stable, testing or unstable suites!"
           ;;
       esac
     else
-      echo "no suite choosen! choose a suite!"
+      echo "no suite chosen! choose a suite!"
       exit 1
     fi
     ;;
@@ -155,7 +155,7 @@ case ${1} in
     printf '%s\n'   "Usage:"
     printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
     printf '%s\n'   "[SUITE]:"
-    printf '\t%s\n' "the standar debian suites stable, testing and unstable are supported"
+    printf '\t%s\n' "the standard debian suites stable, testing and unstable are supported"
     printf '\t%s\n' "as arguments as well as the debian and devuan specific codenames for"
     printf '\t%s\n' "such suites can be used without any issue."
     printf '\t%s\n' "Note however that the actual suite name written to the mirros at"
@@ -173,7 +173,7 @@ case ${1} in
     printf '\t%s\n' "the default ones."
     ;;
   *)
-    echo "no option choosen, send debug or suite (stable, testing, unstable)."
+    echo "no option chosen, send debug or suite (stable, testing, unstable)."
     echo "check the help section with either 'help' '-h' '--help' '-help'"
     exit 1
    ;;

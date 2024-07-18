@@ -163,7 +163,7 @@ case ${1} in
     printf '\t%s\n' "by the script's internal variables, which are:"
     printf '\t\t%s\n' "\$dev_stab: ${dev_stab}"
     printf '\t\t%s\n' "\$dev_test: ${dev_test}"
-    printf '\t\t%s\n' "\$dev_stab: ${dev_unst}"
+    printf '\t\t%s\n' "\$dev_unst: ${dev_unst}"
     printf '\n'
     printf '\t%s\n' "by default only the repos added are deb.devuan.nz and deb.devuan.org"
     printf '\t%s\n' "to add more repos create a file in \$XDG_CONFIG_HOME/devuan/mirrors"

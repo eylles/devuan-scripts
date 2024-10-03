@@ -136,7 +136,7 @@ case ${1} in
   unstable|"${deb_unst}"|"${dev_unst}")
     apt install usrmerge
     mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-    apt_sources "sid" > /etc/apt/sources.list
+    apt_sources "unstable" > /etc/apt/sources.list
     apt update
     ;;
   testing|"${deb_test}"|"${dev_test}")

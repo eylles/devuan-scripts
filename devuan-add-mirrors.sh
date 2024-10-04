@@ -24,6 +24,9 @@ deb_urls=""
 deb_urls="${deb_urls} deb.devuan.nz"
 deb_urls="${deb_urls} deb.devuan.org"
 
+# Usage: print_deb_url "$mirror" "$suite"
+# Suite: stable, testing, unstable
+# Mirror: deb mirror url like: deb.devuan.org
 print_deb_url () {
   case ${2} in
     unstable)
@@ -56,6 +59,8 @@ print_deb_url () {
   esac
 }
 
+# Usage: apt_sources "suite"
+# Suite: stable, testing, unstable
 apt_sources () {
   case ${1} in
     unstable)

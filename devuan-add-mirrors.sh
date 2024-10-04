@@ -2,6 +2,51 @@
 
 myname=${0##*/}
 
+# Return type: string
+# Usage: trim_string "   example   string    "
+# Out:   "example   string"
+trim_string() {
+  # Remove all leading white-space.
+  # '${1%%[![:space:]]*}': Strip everything but leading white-space.
+  # '${1#${XXX}}': Remove the white-space from the start of the string.
+  trim=${1#${1%%[![:space:]]*}}
+
+  # Remove all trailing white-space.
+  # '${trim##*[![:space:]]}': Strip everything but trailing white-space.
+  # '${trim%${XXX}}': Remove the white-space from the end of the string.
+  trim=${trim%${trim##*[![:space:]]}}
+
+  printf '%s\n' "$trim"
+}
+
+# Usage: lwc "EXAMPLE String"
+# Out:   "example string"
+lwc () {
+ printf '%s\n' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+b_spacer="#################"
+b_middle="###################"
+distro_str_D=" Distribution Info "
+distro_str_t="Type"
+distro_str_d="Description"
+distro_type=$(lsb_release -i)
+distro_type="${distro_type##*:}"
+distro_type=$(trim_string "$distro_type")
+distro_type=$(lwc "$distro_type")
+distro_name=$(lsb_release -d)
+distro_name="${distro_name##*:}"
+distro_name=$(trim_string "$distro_name")
+
+distro_info () {
+  # print distro info
+  printf '%s%s%s\n'   "$b_spacer" "$distro_str_D" "$b_spacer"
+  printf '# %11s: %-36s #\n' "$distro_str_t" "$distro_type"
+  printf '# %11s: %-36s #\n' "$distro_str_d" "$distro_name"
+  printf '%s%s%s\n'   "$b_spacer" "$b_middle" "$b_spacer"
+  printf '\n'
+}
+
 ######################
 # devuan suite names #
 ######################
@@ -136,18 +181,21 @@ case ${1} in
     if [ -n "${2}" ]; then
       case ${2} in
         unstable|"${deb_unst}"|"${dev_unst}")
+          distro_info
           echo "the following settings will be applied:"
           printf '%s\n' "apt: install usrmerge"
           printf '%s\n' "apt sources: ${2} suite"
           apt_sources "unstable"
           ;;
         testing|"${deb_test}"|"${dev_test}")
+          distro_info
           echo "the following settings will be applied:"
           printf '%s\n' "apt: install usrmerge"
           printf '%s\n' "apt sources: ${2} suite"
           apt_sources "testing"
           ;;
         stable|"${deb_stab}"|"${dev_stab}")
+          distro_info
           echo "the following settings will be applied:"
           printf '%s\n' "apt sources: ${2} suite"
           apt_sources "stable"
@@ -163,18 +211,21 @@ case ${1} in
     fi
     ;;
   unstable|"${deb_unst}"|"${dev_unst}")
+    distro_info
     apt install usrmerge
     mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
     apt_sources "unstable" > /etc/apt/sources.list
     apt update
     ;;
   testing|"${deb_test}"|"${dev_test}")
+    distro_info
     apt install usrmerge
     mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
     apt_sources "testing" > /etc/apt/sources.list
     apt update
     ;;
   stable|"${deb_stab}"|"${dev_stab}")
+    distro_info
     mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
     apt_sources "stable" > /etc/apt/sources.list
     apt update

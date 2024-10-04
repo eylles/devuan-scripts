@@ -82,6 +82,30 @@ apt_sources () {
   done
 }
 
+# Usage: _help
+_help () {
+  printf '%s\n'   "${myname}: add more mirrors to your devuan install"
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
+  printf '%s\n'   "[SUITE]:"
+  printf '\t%s\n' "the standard debian suites stable, testing and unstable are supported"
+  printf '\t%s\n' "as arguments as well as the debian and devuan specific codenames for"
+  printf '\t%s\n' "such suites can be used without any issue."
+  printf '\t%s\n' "Note however that the actual suite name written to the mirros at"
+  printf '\t%s\n' "/etc/apt/sources.list WILL be the current DEVUAN codenames as defined"
+  printf '\t%s\n' "by the script's internal variables, which are:"
+  printf '\t\t%s\n' "\$dev_stab: ${dev_stab}"
+  printf '\t\t%s\n' "\$dev_test: ${dev_test}"
+  printf '\t\t%s\n' "\$dev_unst: ${dev_unst}"
+  printf '\n'
+  printf '\t%s\n' "by default only the repos added are deb.devuan.nz and deb.devuan.org"
+  printf '\t%s\n' "to add more repos create a file in \$XDG_CONFIG_HOME/devuan/mirrors"
+  printf '\t%s\n' "and inside specify your mirror's URL only in the format:"
+  printf '\t\t%s\n' "deb_urls=\"\${deb_urls} deb.devuan.org\""
+  printf '\t%s\n' "this way the script can simply append your configured mirror urls to"
+  printf '\t%s\n' "the default ones."
+}
+
 configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 UserID=$(id -u)
@@ -156,26 +180,7 @@ case ${1} in
     apt update
     ;;
   -h|-help|--help|help)
-    printf '%s\n'   "${myname}: add more mirrors to your devuan install"
-    printf '%s\n'   "Usage:"
-    printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
-    printf '%s\n'   "[SUITE]:"
-    printf '\t%s\n' "the standard debian suites stable, testing and unstable are supported"
-    printf '\t%s\n' "as arguments as well as the debian and devuan specific codenames for"
-    printf '\t%s\n' "such suites can be used without any issue."
-    printf '\t%s\n' "Note however that the actual suite name written to the mirros at"
-    printf '\t%s\n' "/etc/apt/sources.list WILL be the current DEVUAN codenames as defined"
-    printf '\t%s\n' "by the script's internal variables, which are:"
-    printf '\t\t%s\n' "\$dev_stab: ${dev_stab}"
-    printf '\t\t%s\n' "\$dev_test: ${dev_test}"
-    printf '\t\t%s\n' "\$dev_unst: ${dev_unst}"
-    printf '\n'
-    printf '\t%s\n' "by default only the repos added are deb.devuan.nz and deb.devuan.org"
-    printf '\t%s\n' "to add more repos create a file in \$XDG_CONFIG_HOME/devuan/mirrors"
-    printf '\t%s\n' "and inside specify your mirror's URL only in the format:"
-    printf '\t\t%s\n' "deb_urls=\"\${deb_urls} deb.devuan.org\""
-    printf '\t%s\n' "this way the script can simply append your configured mirror urls to"
-    printf '\t%s\n' "the default ones."
+    _help
     ;;
   *)
     echo "no option chosen, send debug or suite (stable, testing, unstable)."

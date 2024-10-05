@@ -64,10 +64,47 @@ deb_stab=bookworm
 deb_test=trixie
 deb_unst=sid
 
-# mirror urls to use
+######################
+# mirror urls to use #
+######################
+
+# devuan
+dev_urls=""
+dev_urls="${dev_urls} deb.devuan.nz"
+dev_urls="${dev_urls} deb.devuan.org"
+
+# debian
 deb_urls=""
-deb_urls="${deb_urls} deb.devuan.nz"
-deb_urls="${deb_urls} deb.devuan.org"
+deb_urls="${deb_urls} ftp.nz.debian.org"
+deb_urls="${deb_urls} deb.debian.org"
+
+# mirror name urls, ie: deb.debian.org
+urls=""
+# archive type, "debian" for debian and "merged" for devuan
+archive=""
+# stable suite, ie bookworm or daedalus
+u_stab=""
+# testing suite, ie trixie or excalibur
+u_test=""
+# unstable suite, ie sid or ceres
+u_unst=""
+
+case "${distro_type}" in
+  debian)
+    urls=${deb_urls}
+    archive="debian"
+    u_stab="$deb_stab"
+    u_test="$deb_test"
+    u_unst="$deb_unst"
+    ;;
+  devuan)
+    urls=${dev_urls}
+    archive="merged"
+    u_stab="$dev_stab"
+    u_test="$dev_test"
+    u_unst="$dev_unst"
+    ;;
+esac
 
 # Usage: print_deb_url "$mirror" "$suite"
 # Suite: stable, testing, unstable
@@ -76,29 +113,29 @@ print_deb_url () {
   case ${2} in
     unstable)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n'     "deb http://${1}/merged ${dev_unst} main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/merged ${dev_unst} main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/${archive} ${u_unst} main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/${archive} ${u_unst} main contrib non-free non-free-firmware"
       printf '\n'
       ;;
     testing)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n'     "deb http://${1}/merged ${dev_test} main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/merged ${dev_test} main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/${archive} ${u_test} main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/${archive} ${u_test} main contrib non-free non-free-firmware"
       printf '\n'
       ;;
     stable)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n'     "deb http://${1}/merged ${dev_stab} main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/merged ${dev_stab} main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/${archive} ${u_stab} main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab} main contrib non-free non-free-firmware"
       printf '\n'
-      printf '%s\n'     "deb http://${1}/merged ${dev_stab}-security main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/merged ${dev_stab}-security main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/${archive} ${u_stab}-security main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab}-security main contrib non-free non-free-firmware"
       printf '\n'
-      printf '%s\n'     "deb http://${1}/merged ${dev_stab}-updates main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/merged ${dev_stab}-updates main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/${archive} ${u_stab}-updates main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab}-updates main contrib non-free non-free-firmware"
       printf '\n'
-      printf '%s\n'     "deb http://${1}/merged ${dev_stab}-backports main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/merged ${dev_stab}-backports main contrib non-free non-free-firmware"
+      printf '%s\n'     "deb http://${1}/${archive} ${u_stab}-backports main contrib non-free non-free-firmware"
+      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab}-backports main contrib non-free non-free-firmware"
       printf '\n'
       ;;
   esac
@@ -119,17 +156,17 @@ apt_sources () {
       ;;
   esac
   echo "############################"
-  printf '%s %9s %s\n' "# devuan" "${suite}" "sources #"
+  printf '# %s %9s %s #\n' "${distro_type}" "${suite}" "sources"
   echo "############################"
   echo
-  for mirror in ${deb_urls}; do
+  for mirror in ${urls}; do
     print_deb_url "$mirror" "$suite"
   done
 }
 
 # Usage: _help
 _help () {
-  printf '%s\n'   "${myname}: add more mirrors to your devuan install"
+  printf '%s\n'   "${myname}: add more mirrors to your devuan or debian install"
   printf '%s\n'   "Usage:"
   printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
   printf '%s\n'   "[SUITE]:"
@@ -137,16 +174,23 @@ _help () {
   printf '\t%s\n' "as arguments as well as the debian and devuan specific codenames for"
   printf '\t%s\n' "such suites can be used without any issue."
   printf '\t%s\n' "Note however that the actual suite name written to the mirros at"
-  printf '\t%s\n' "/etc/apt/sources.list WILL be the current DEVUAN codenames as defined"
+  printf '\t%s\n' "/etc/apt/sources.list WILL be the current codenames as defined"
   printf '\t%s\n' "by the script's internal variables, which are:"
+  printf '\t%s\n' "for devuan:"
   printf '\t\t%s\n' "\$dev_stab: ${dev_stab}"
   printf '\t\t%s\n' "\$dev_test: ${dev_test}"
   printf '\t\t%s\n' "\$dev_unst: ${dev_unst}"
+  printf '\t%s\n' "for debian:"
+  printf '\t\t%s\n' "\$deb_stab: ${deb_stab}"
+  printf '\t\t%s\n' "\$deb_test: ${deb_test}"
+  printf '\t\t%s\n' "\$deb_unst: ${deb_unst}"
   printf '\n'
-  printf '\t%s\n' "by default only the repos added are deb.devuan.nz and deb.devuan.org"
-  printf '\t%s\n' "to add more repos create a file in \$XDG_CONFIG_HOME/devuan/mirrors"
+  printf '\t%s\n' "by default only 2 repos are added:"
+  printf '\t%s\n' "for devuan: deb.devuan.nz and deb.devuan.org"
+  printf '\t%s\n' "for debian: ftp.nz.debian.org and deb.devuan.org"
+  printf '\t%s\n' "to add more repos create a file in \$XDG_CONFIG_HOME/${distro_type}/mirrors"
   printf '\t%s\n' "and inside specify your mirror's URL only in the format:"
-  printf '\t\t%s\n' "deb_urls=\"\${deb_urls} deb.devuan.org\""
+  printf '\t\t%s\n' "urls=\"\${urls} deb.devuan.org\""
   printf '\t%s\n' "this way the script can simply append your configured mirror urls to"
   printf '\t%s\n' "the default ones."
 }
@@ -168,7 +212,7 @@ if [ "$UserID" -eq 0 ]; then
   fi
 fi
 
-usemirrors="${configdir}/devuan/mirrors"
+usemirrors="${configdir}/${distro_type}/mirrors"
 
 if [ -f "$usemirrors" ]; then
   # yep, we do NOT check the contents just source them blindly

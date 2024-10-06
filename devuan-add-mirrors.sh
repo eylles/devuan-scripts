@@ -106,6 +106,26 @@ case "${distro_type}" in
     ;;
 esac
 
+# Usage: printurl "domain" "suite" "suffix"
+# Examples:
+#   domain: deb.debian.org
+#   suite:  bookworm
+#   suffix: backports
+printurl () {
+  # domain
+  d="${1}"
+  # suite
+  s="${2}"
+  # suffix
+  u=""
+  if [ -n "${3}" ]; then
+    u="-${3}"
+  fi
+  printf '%s\n'     "deb http://${d}/${archive} ${s}${u} main contrib non-free non-free-firmware"
+  printf '%s\n' "deb-src http://${d}/${archive} ${s}${u} main contrib non-free non-free-firmware"
+  printf '\n'
+}
+
 # Usage: print_deb_url "$mirror" "$suite"
 # Suite: stable, testing, unstable
 # Mirror: deb mirror url like: deb.devuan.org
@@ -113,30 +133,18 @@ print_deb_url () {
   case ${2} in
     unstable)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n'     "deb http://${1}/${archive} ${u_unst} main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/${archive} ${u_unst} main contrib non-free non-free-firmware"
-      printf '\n'
+      printurl "${1}" "${u_unst}"
       ;;
     testing)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n'     "deb http://${1}/${archive} ${u_test} main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/${archive} ${u_test} main contrib non-free non-free-firmware"
-      printf '\n'
+      printurl "${1}" "${u_test}"
       ;;
     stable)
       printf '%s\n' "# mirror ${1}"
-      printf '%s\n'     "deb http://${1}/${archive} ${u_stab} main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab} main contrib non-free non-free-firmware"
-      printf '\n'
-      printf '%s\n'     "deb http://${1}/${archive} ${u_stab}-security main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab}-security main contrib non-free non-free-firmware"
-      printf '\n'
-      printf '%s\n'     "deb http://${1}/${archive} ${u_stab}-updates main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab}-updates main contrib non-free non-free-firmware"
-      printf '\n'
-      printf '%s\n'     "deb http://${1}/${archive} ${u_stab}-backports main contrib non-free non-free-firmware"
-      printf '%s\n' "deb-src http://${1}/${archive} ${u_stab}-backports main contrib non-free non-free-firmware"
-      printf '\n'
+      printurl "${1}" "${u_stab}"
+      printurl "${1}" "${u_stab}" "security"
+      printurl "${1}" "${u_stab}" "updates"
+      printurl "${1}" "${u_stab}" "backports"
       ;;
   esac
 }

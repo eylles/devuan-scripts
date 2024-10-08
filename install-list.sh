@@ -72,8 +72,11 @@ lsb-base
 other="
 upower
 pkexec
-flatpak
 btrfs-progs
+"
+
+flatpak="
+flatpak
 "
 
 vifm="
@@ -192,11 +195,18 @@ case ${1} in
     echo $console_prod
     echo "compression:"
     echo $compression
+    echo "minimal setup:"
     echo $min_setup
+    echo "downloading:"
     echo $donwloading
+    echo "vifm:"
     echo $vifm
+    echo "devuan:"
     echo $devuan
+    echo "others:"
     echo $other
+    echo "flatpak support:"
+    echo $flatpak
     ;;
   install|reinstall)
     if [ -z "$2" ]; then
@@ -210,6 +220,7 @@ case ${1} in
       echo "    donwloading"
       echo "    vifm"
       echo "    other"
+      echo "    flatpak"
       echo "    graphics_drivers"
       echo "    devuan"
       exit 1
@@ -226,6 +237,7 @@ case ${1} in
         $donwloading
         $vifm
         $other
+        $flatpak
         $graphics_drivers
         $devuan
         "
@@ -268,6 +280,9 @@ case ${1} in
         ;;
       other)
         apt $apt_act $other
+        ;;
+      flatpak)
+        apt $apt_act $flatpak
         ;;
       drivers|graphics|graphic-drivers)
         apt $apt_act $graphics_drivers

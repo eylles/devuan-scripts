@@ -281,7 +281,7 @@ case ${1} in
     #apt full-upgrade
     ;;
   *)
-    echo "no option choosen, use debug or install."
+    echo "no option choosen, use debug, install or reinstall."
     exit 1
     ;;
 esac

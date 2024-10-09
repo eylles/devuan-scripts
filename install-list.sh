@@ -178,6 +178,17 @@ jq
 ncdu
 "
 
+printing="
+cups
+hplip
+hplip-gui
+simple-scan
+printer-driver-hpcups
+printer-driver-hpijs
+printer-driver-postscript-hp
+system-config-printer
+"
+
 case ${1} in
   debug)
     echo "the following packages are to be installed:"
@@ -197,6 +208,8 @@ case ${1} in
     echo $vifm
     echo "devuan:"
     echo $devuan
+    echo "printing and scanning support:"
+    echo $printing
     echo "others:"
     echo $other
     echo "flatpak support:"
@@ -213,6 +226,7 @@ case ${1} in
       echo "    min_setup"
       echo "    downloading"
       echo "    vifm"
+      echo "    printing"
       echo "    other"
       echo "    flatpak"
       echo "    graphics_drivers"
@@ -230,6 +244,7 @@ case ${1} in
         $min_setup
         $downloading
         $vifm
+        $printing
         $other
         $flatpak
         $graphics_drivers
@@ -271,6 +286,9 @@ case ${1} in
         ;;
       vifm)
         apt $apt_act $vifm
+        ;;
+      printing|scanning|printer|hplip)
+        apt $apt_act $printing
         ;;
       other)
         apt $apt_act $other

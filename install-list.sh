@@ -56,12 +56,6 @@ mesa-va-drivers
 mesa-utils
 "
 
-# do not install these manually
-#libllvm13
-#libllvm14
-#libllvm15
-#libllvm16
-
 devuan="
 elogind
 eudev
@@ -292,8 +286,6 @@ case ${1} in
         exit 1
         ;;
     esac
-    #apt update
-    #apt full-upgrade
     ;;
   *)
     echo "no option chosen, use debug, install or reinstall."

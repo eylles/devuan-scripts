@@ -104,7 +104,7 @@ unar
 unrar
 "
 
-donwloading="
+downloading="
 curl
 aria2
 wget
@@ -198,7 +198,7 @@ case ${1} in
     echo "minimal setup:"
     echo $min_setup
     echo "downloading:"
-    echo $donwloading
+    echo $downloading
     echo "vifm:"
     echo $vifm
     echo "devuan:"
@@ -217,7 +217,7 @@ case ${1} in
       echo "    console_prod"
       echo "    compression"
       echo "    min_setup"
-      echo "    donwloading"
+      echo "    downloading"
       echo "    vifm"
       echo "    other"
       echo "    flatpak"
@@ -234,7 +234,7 @@ case ${1} in
         $console_prod
         $compression
         $min_setup
-        $donwloading
+        $downloading
         $vifm
         $other
         $flatpak
@@ -250,7 +250,7 @@ case ${1} in
         $console_prod
         $compression
         $min_setup
-        $donwloading
+        $downloading
         $vifm
         $other
         $graphics_drivers
@@ -272,8 +272,8 @@ case ${1} in
       min-setup)
         apt $apt_act $min_setup
         ;;
-      donwloading|curl|megatools|download|dld)
-        apt $apt_act $donwloading
+      downloading|curl|megatools|download|dld)
+        apt $apt_act $downloading
         ;;
       vifm)
         apt $apt_act $vifm
@@ -296,7 +296,7 @@ case ${1} in
     #apt full-upgrade
     ;;
   *)
-    echo "no option choosen, use debug, install or reinstall."
+    echo "no option chosen, use debug, install or reinstall."
     exit 1
     ;;
 esac

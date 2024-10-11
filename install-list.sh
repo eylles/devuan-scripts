@@ -1,5 +1,7 @@
 #!/bin/sh
 
+myname=${0##*/}
+
 packages="
 accountsservice
 network-manager
@@ -188,6 +190,42 @@ printer-driver-hpijs
 printer-driver-postscript-hp
 system-config-printer
 "
+
+# Usage: _help
+_help () {
+  printf '%s\n'   "${myname}: quickly install or reinstall lists of packages"
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} debug | help | install [LIST] | reinstall [LIST]"
+  printf '%s\n'   "[LIST]:"
+  printf '\t%s\n' "the list of programs to install/reinstall, you can pass the list 'all'"
+  printf '\t%s\n' "to install the programs from all the lists or a specific list"
+  printf '\t%s\n' "the following lists are available:"
+  printf '\t\t%-18s\t%-18s\n' "####   Var   ####" "####   Arg   ####"
+  printf '\t\t%-18s\t%-18s\n' "\$packages" "packages"
+  printf '\t\t%-18s\t%-18s\n' "\$zsh" "zsh"
+  printf '\t\t%-18s\t%-18s\n' "\$console_prod" "console-prod"
+  printf '\t\t%-18s\t%-18s\n' "\$compression" "compression"
+  printf '\t\t%-18s\t%-18s\n' "\$min_setup" "min-setup"
+  printf '\t\t%-18s\t%-18s\n' "\$downloading" "downloading"
+  printf '\t\t%-18s\t%-18s\n' "\$vifm" "vifm"
+  printf '\t\t%-18s\t%-18s\n' "\$printing" "printing"
+  printf '\t\t%-18s\t%-18s\n' "\$other" "other"
+  printf '\t\t%-18s\t%-18s\n' "\$flatpak" "flatpak"
+  printf '\t\t%-18s\t%-18s\n' "\$graphics_drivers" "graphics-drivers"
+  printf '\t\t%-18s\t%-18s\n' "\$devuan_base" "devuan-base"
+  printf '\t%s\n' "to modify the lists write a file to \$XDG_CONFIG_HOME/install-list/proglist"
+  printf '\t%s\n' "and inside write the modified program lists in one of the following formats:"
+  printf '\t%s\n' "to append to the default lists:"
+  printf '\t\t%s\n' "packages=\"\${packages} emacs ffmpeg\""
+  printf '\t%s\n' "to overwrite the default lists:"
+  printf '\t\t%s\n' "packages=\"emacs ffmpeg\""
+  printf '\t%s\n' "besides the modifiable lists there exists some special lists that can be"
+  printf '\t%s\n' "passed as arguments:"
+  printf '\t\t%-18s\t%s\n' "all" "- all the lists"
+  printf '\t\t%-18s\t%s\n' "devuan" "- all lists except printing and flatpak"
+  printf '\t\t%-18s\t%s\n' "debian" "- all lists except printing, flatpak and devuan_base"
+}
+
 configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 UserID=$(id -u)
@@ -291,7 +329,7 @@ case ${1} in
         "
         apt $apt_act $tosintall
         ;;
-      devuan-base)
+      devuan-base|devuan_base)
         tosintall="
         $devuan_base
         "
@@ -318,7 +356,7 @@ case ${1} in
       zsh)
         apt $apt_act $zsh
         ;;
-      console|console-prod)
+      console|console-prod|console_prod)
         apt $apt_act $console_prod
         ;;
       compression|comp|zip|rar)
@@ -342,7 +380,7 @@ case ${1} in
       flatpak)
         apt $apt_act $flatpak
         ;;
-      drivers|graphics|graphic-drivers)
+      drivers|graphics|graphics-drivers|graphics_drivers)
         apt $apt_act $graphics_drivers
         ;;
       *)
@@ -350,6 +388,9 @@ case ${1} in
         exit 1
         ;;
     esac
+    ;;
+  -h|--help|help)
+    _help
     ;;
   *)
     echo "no option chosen, use debug, install or reinstall."

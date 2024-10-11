@@ -188,6 +188,31 @@ printer-driver-hpijs
 printer-driver-postscript-hp
 system-config-printer
 "
+configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+UserID=$(id -u)
+LocalUserID=$(id -u "$(logname)")
+# this will usually be used with sudo so we have to load the correct file
+if [ "$UserID" -eq 0 ]; then
+  # seems we are root
+  # are we really root tho?
+  if [ "$UserID" -ne "$LocalUserID" ]; then
+    # not actual root
+    # get local user name
+    user=$(logname)
+    # if this is not your actual config dir then get rekt
+    configdir="/home/${user}/.config"
+  fi
+fi
+
+uselists="${configdir}/install-list/proglist"
+
+if [ -f "$uselists" ]; then
+  # yep, we do NOT check the contents just source them blindly
+  # if the user wrote something bad it is his problem~~
+  . "$uselists"
+fi
+
 
 case ${1} in
   debug)

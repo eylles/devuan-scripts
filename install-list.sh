@@ -56,7 +56,7 @@ mesa-va-drivers
 mesa-utils
 "
 
-devuan="
+devuan_base="
 elogind
 eudev
 seatd
@@ -232,7 +232,7 @@ case ${1} in
     echo "vifm:"
     echo $vifm
     echo "devuan:"
-    echo $devuan
+    echo $devuan_base
     echo "printing and scanning support:"
     echo $printing
     echo "others:"
@@ -255,7 +255,7 @@ case ${1} in
       echo "    other"
       echo "    flatpak"
       echo "    graphics_drivers"
-      echo "    devuan"
+      echo "    devuan_base"
       exit 1
     fi
     apt_act="$1"
@@ -273,7 +273,7 @@ case ${1} in
         $other
         $flatpak
         $graphics_drivers
-        $devuan
+        $devuan_base
         "
         apt $apt_act $tosintall
         ;;
@@ -288,6 +288,12 @@ case ${1} in
         $vifm
         $other
         $graphics_drivers
+        "
+        apt $apt_act $tosintall
+        ;;
+      devuan-base)
+        tosintall="
+        $devuan_base
         "
         apt $apt_act $tosintall
         ;;

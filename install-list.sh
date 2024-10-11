@@ -297,6 +297,21 @@ case ${1} in
         "
         apt $apt_act $tosintall
         ;;
+      nodebian|devuan)
+        tosintall="
+        $packages
+        $zsh
+        $console_prod
+        $compression
+        $min_setup
+        $downloading
+        $vifm
+        $other
+        $graphics_drivers
+        $devuan_base
+        "
+        apt $apt_act $tosintall
+        ;;
       general)
         apt $apt_act $packages
         ;;

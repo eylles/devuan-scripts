@@ -177,8 +177,8 @@ show_usage () {
   printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
 }
 
-# Usage: _help
-_help () {
+# Usage: show_help
+show_help () {
   printf '%s\n'   "${myname}: add more mirrors to your devuan or debian install"
   show_usage
   printf '%s\n'   "[SUITE]:"
@@ -259,7 +259,7 @@ case ${1} in
         *)
           printf '%s' "no valid suite chosen, choose from the current"
           printf '%s\n' "stable, testing or unstable suites!"
-          _help
+          show_help
           exit 1
           ;;
       esac
@@ -290,7 +290,7 @@ case ${1} in
     apt update
     ;;
   -h|-help|--help|help)
-    _help
+    show_help
     ;;
   *)
     echo "no option chosen, send debug or suite (stable, testing, unstable)."

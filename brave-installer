@@ -2,7 +2,7 @@
 
 myname="${0##*/}"
 
-architechture=$(arch)
+architecture=$(arch)
 
 fetch_keyrin (){
   curl -fsSLo \
@@ -15,7 +15,7 @@ add_sources () {
   # to your system in order to install steam and wine
   # with this that message about Skipping acquire of 'main/binary-i386/Packages'
   # will not appear from the breave repo
-  if [ "$architechture" = "x86_64" ]; then
+  if [ "$architecture" = "x86_64" ]; then
     m_arch="arch=amd64"
   else
     m_arch=""
@@ -34,7 +34,7 @@ install_brave () {
 }
 
 main () {
-  echo "${myname}: accquiring brave keyring"
+  echo "${myname}: acquiring brave keyring"
   fetch_keyrin
   echo "${myname}: adding sources list to '/etc/apt/sources.list.d/brave-browser-release.list'"
   add_sources

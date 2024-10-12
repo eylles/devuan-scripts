@@ -191,11 +191,15 @@ printer-driver-postscript-hp
 system-config-printer
 "
 
+show_usage () {
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} debug | help | install [LIST] | reinstall [LIST]"
+}
+
 # Usage: show_help
 show_help () {
   printf '%s\n'   "${myname}: quickly install or reinstall lists of packages"
-  printf '%s\n'   "Usage:"
-  printf '\t%s\n' "${myname} debug | help | install [LIST] | reinstall [LIST]"
+  show_usage
   printf '%s\n'   "[LIST]:"
   printf '\t%s\n' "the list of programs to install/reinstall, you can pass the list 'all'"
   printf '\t%s\n' "to install the programs from all the lists or a specific list"
@@ -385,6 +389,7 @@ case ${1} in
         ;;
       *)
         echo "unknown package list $2"
+        show_help
         exit 1
         ;;
     esac
@@ -394,6 +399,7 @@ case ${1} in
     ;;
   *)
     echo "no option chosen, use debug, install or reinstall."
+    show_usage
     exit 1
     ;;
 esac

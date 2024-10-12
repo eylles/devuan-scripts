@@ -172,11 +172,15 @@ apt_sources () {
   done
 }
 
+show_usage () {
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
+}
+
 # Usage: _help
 _help () {
   printf '%s\n'   "${myname}: add more mirrors to your devuan or debian install"
-  printf '%s\n'   "Usage:"
-  printf '\t%s\n' "${myname} [SUITE] | debug [SUITE] | help"
+  show_usage
   printf '%s\n'   "[SUITE]:"
   printf '\t%s\n' "the standard debian suites stable, testing and unstable are supported"
   printf '\t%s\n' "as arguments as well as the debian and devuan specific codenames for"
@@ -255,10 +259,13 @@ case ${1} in
         *)
           printf '%s' "no valid suite chosen, choose from the current"
           printf '%s\n' "stable, testing or unstable suites!"
+          _help
+          exit 1
           ;;
       esac
     else
       echo "no suite chosen! choose a suite!"
+      show_usage
       exit 1
     fi
     ;;
@@ -288,6 +295,7 @@ case ${1} in
   *)
     echo "no option chosen, send debug or suite (stable, testing, unstable)."
     echo "check the help section with either 'help' '-h' '--help' '-help'"
+    show_usage
     exit 1
    ;;
 esac

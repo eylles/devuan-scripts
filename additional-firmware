@@ -7,12 +7,12 @@ tmp_d="$TMPDIR/firmware_installer_$$"
 firmware_dir=/lib/firmware/amdgpu/
 
 die() {
-    [ -n "$1" ] && printf '%s\n' "$*" >&2;
-    exit 1
+  [ -n "$1" ] && printf '%s\n' "$*" >&2;
+  exit 1
 }
 
 cleanup() {
-    rm -rf -- "$tmp_d"
+  rm -rf -- "$tmp_d"
 }
 
 trap cleanup EXIT INT TERM
@@ -27,16 +27,16 @@ files="aldebaran_cap.bin gc_11_0_0_mes_2.bin gc_11_0_0_toc.bin gc_11_0_1_mes_2.b
 cd "$tmp_d" || die "failed to cd into tmp dir"
 
 for file in $files ; do
-   cmd="wget $url$file"
-   $cmd
+  cmd="wget $url$file"
+  $cmd
 done
 
 echo "${myname}: installing additional amd firmware files"
 for file in $files ; do
-   if [ -f "${firmware_dir}${file}" ]; then
-      printf '%s %25s %s\n' "firmware file" "${file}" "already exists"
-   else
-      printf '%s %25s %s\n' "firmware file" "${file}" "doesn't exist, copying it..."
-      cp "$file" "${firmware_dir}${file}"
-   fi
+  if [ -f "${firmware_dir}${file}" ]; then
+    printf '%s %25s %s\n' "firmware file" "${file}" "already exists"
+  else
+    printf '%s %25s %s\n' "firmware file" "${file}" "doesn't exist, copying it..."
+    cp "$file" "${firmware_dir}${file}"
+  fi
 done

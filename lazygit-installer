@@ -6,12 +6,12 @@ TMPDIR="${TMPDIR:-/tmp}"
 cache_dir="$TMPDIR/lazygit_installer_$$"
 
 die() {
-    [ -n "$1" ] && printf '%s\n' "$*" >&2;
-    exit 1
+  [ -n "$1" ] && printf '%s\n' "$*" >&2;
+  exit 1
 }
 
 cleanup() {
-    rm -rf -- "$cache_dir"
+  rm -rf -- "$cache_dir"
 }
 
 trap cleanup EXIT INT TERM
@@ -35,9 +35,9 @@ echo "${myname}: installing..."
 tar xf lazygit.tar.gz lazygit || die "extraction failed!"
 # got root?
 if [ "$(id -u)" -eq 0 ]; then
-    install lazygit /usr/local/bin/
+  install lazygit /usr/local/bin/
 else
-    sudo install lazygit /usr/local/bin/
+  sudo install lazygit /usr/local/bin/
 fi
 echo "${myname}: installation complete!"
 

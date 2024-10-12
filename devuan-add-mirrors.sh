@@ -22,7 +22,7 @@ trim_string() {
 # Usage: lwc "EXAMPLE String"
 # Out:   "example string"
 lwc () {
- printf '%s\n' "$1" | tr '[:upper:]' '[:lower:]'
+  printf '%s\n' "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 b_spacer="#################"
@@ -291,5 +291,3 @@ case ${1} in
     exit 1
    ;;
 esac
-
-

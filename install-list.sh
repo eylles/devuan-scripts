@@ -191,8 +191,8 @@ printer-driver-postscript-hp
 system-config-printer
 "
 
-# Usage: _help
-_help () {
+# Usage: show_help
+show_help () {
   printf '%s\n'   "${myname}: quickly install or reinstall lists of packages"
   printf '%s\n'   "Usage:"
   printf '\t%s\n' "${myname} debug | help | install [LIST] | reinstall [LIST]"
@@ -390,7 +390,7 @@ case ${1} in
     esac
     ;;
   -h|--help|help)
-    _help
+    show_help
     ;;
   *)
     echo "no option chosen, use debug, install or reinstall."

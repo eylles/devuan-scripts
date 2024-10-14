@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# this is a re-make of a script originally called debianUI, i could no longer find the repo where i
+# got that script from, so decided to re-create it on my way as a posix shell script.
+
 myname=${0##*/}
 
 aptcmd=apt-get

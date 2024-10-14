@@ -185,7 +185,7 @@ main () {
       * )
         pmsg " Wrong option"
         printf '%s\n' "  Please try again...  "
-        sleep 2
+        sleep 1
         ;;
       esac
   done

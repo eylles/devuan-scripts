@@ -29,7 +29,7 @@ apt_purge () {
       --multi --exact --no-sort \
       --select-1 --margin="4%,1%,1%,2%" \
       --inline-info \
-      --preview-window=right:55%:wrap \
+      --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
       --bind alt-k:preview-up \
       --bind alt-j:preview-down \
       --query="$input" \
@@ -57,7 +57,7 @@ apt_install () {
       --multi --exact --no-sort \
       --select-1 --margin="4%,1%,1%,2%" \
       --inline-info \
-      --preview-window=right:55%:wrap \
+      --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
       --bind alt-k:preview-up \
       --bind alt-j:preview-down \
       --query="$input" \

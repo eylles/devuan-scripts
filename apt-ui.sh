@@ -32,6 +32,7 @@ apt_purge () {
       --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
       --bind alt-k:preview-up \
       --bind alt-j:preview-down \
+      --bind='pgdn:half-page-down,pgup:half-page-up' \
       --query="$input" \
       --preview 'apt-cache show {1} '\
       --header="TAB key to (un)select. ENTER to purge. ESC to quit." | \
@@ -60,6 +61,7 @@ apt_install () {
       --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
       --bind alt-k:preview-up \
       --bind alt-j:preview-down \
+      --bind='pgdn:half-page-down,pgup:half-page-up' \
       --query="$input" \
       --preview 'apt-cache show {1} '\
       --header="TAB key to (un)select. ENTER to install. ESC to quit." | \

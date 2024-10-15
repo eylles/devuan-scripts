@@ -5,12 +5,45 @@
 
 myname=${0##*/}
 
-aptcmd=apt-get
+# Description:
+#   apt-get command explicit full path
+#   /usr/bin/apt-get
+a_g=/usr/bin/apt-get
+
+# Description:
+#   configutable apt command
+# default value: apt-get
+aptcmd=$a_g
+
+configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+UserID=$(id -u)
+LocalUserID=$(id -u "$(logname)")
+# this could be used with sudo so we have to load the correct file
+if [ "$UserID" -eq 0 ]; then
+  # seems we are root
+  # are we really root tho?
+  if [ "$UserID" -ne "$LocalUserID" ]; then
+    # not actual root
+    # get local user name
+    user=$(logname)
+    # if this is not your actual config dir then get rekt
+    configdir="/home/${user}/.config"
+  fi
+fi
+
+config="${configdir}/apt-ui/config.rc"
+
+if [ -f "$config" ]; then
+  # yep, we do NOT check the contents just source them blindly
+  # if the user wrote something bad it is his problem~~
+  . "$config"
+fi
 
 apt_maintain () {
-  sudo apt-get autoclean
-  sudo apt-get autoremove
-  sudo apt-get update --fix-missing
+  sudo $a_g autoclean
+  sudo $a_g autoremove
+  sudo $a_g update --fix-missing
 }
 
 apt_upgrade () {

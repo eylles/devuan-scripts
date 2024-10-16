@@ -107,6 +107,12 @@ apt_install () {
   fi
 }
 
+# Return type: string
+# Description: returns space separated list of installed packages
+get_installed () {
+  dpkg --get-selections | grep -v deinstall | awk '{print $1}'
+}
+
 # Usage: mstrin "#" 5
 # Output: "#####"
 mstrin () {

@@ -113,6 +113,34 @@ get_installed () {
   dpkg --get-selections | grep -v deinstall | awk '{print $1}'
 }
 
+list_pkg_files () {
+  pkg=""
+  input=""
+  pkg="$( get_installed |
+    fzf \
+      -i \
+      --reverse \
+      --cycle --preview-window sharp \
+      --prompt='filter: ' \
+      --multi --exact --no-sort \
+      --select-1 --margin="4%,1%,1%,2%" \
+      --inline-info \
+      --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
+      --bind alt-k:preview-up \
+      --bind alt-j:preview-down \
+      --bind='pgdn:half-page-down,pgup:half-page-up' \
+      --query="$input" \
+      --preview 'dpkg -L {1} '\
+      --header="TAB key to (un)select. ENTER to install. ESC to quit." | \
+    awk '{print $1}'
+  )"
+
+  pkg="$( printf '%s\n' "$pkg" | paste -sd " " )"
+  if [ -n "$pkg" ]; then
+    dpkg -L $pkg
+  fi
+}
+
 # Usage: mstrin "#" 5
 # Output: "#####"
 mstrin () {

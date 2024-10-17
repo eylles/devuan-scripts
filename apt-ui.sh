@@ -149,6 +149,34 @@ list_all_pkg_files () {
   done
 }
 
+search_pkg_by_file () {
+  pkg=""
+  input=""
+  pkg="$( list_all_pkg_files |
+    fzf \
+      -i \
+      --reverse \
+      --cycle --preview-window sharp \
+      --prompt='filter: ' \
+      --multi --exact --no-sort \
+      --select-1 --margin="4%,1%,1%,2%" \
+      --inline-info \
+      --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
+      --bind alt-k:preview-up \
+      --bind alt-j:preview-down \
+      --bind='pgdn:half-page-down,pgup:half-page-up' \
+      --query="$input" \
+      --preview 'dpkg -S {1} '\
+      --header="TAB key to (un)select. ENTER to install. ESC to quit." | \
+    awk '{print $1}'
+  )"
+
+  pkg="$( printf '%s\n' "$pkg" | paste -sd " " )"
+  if [ -n "$pkg" ]; then
+    dpkg -S $pkg
+  fi
+}
+
 # Usage: mstrin "#" 5
 # Output: "#####"
 mstrin () {

@@ -216,6 +216,8 @@ Ustr="Update System"
 Mstr="Maintain System"
 Istr="Install Packages"
 Pstr="Purge package"
+Lstr="List package files"
+Sstr="Search package files"
 Qstr="Quit"
 
 main () {
@@ -234,9 +236,9 @@ main () {
     s1i=$(spli "$Ustr" 1); s1r=$(spli "$Ustr" 2)
     s2i=$(spli "$Mstr" 1); s2r=$(spli "$Mstr" 2)
     printf ' %s      ' "│"
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-15s' "1" "$s1i" "$s1r"
-    printf '%*s' "22" " "
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-15s' "2" "$s2i" "$s2r"
+    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "1" "$s1i" "$s1r"
+    printf '%*s' "12" " "
+    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "2" "$s2i" "$s2r"
     printf '%*s%s \n' "6" " " "│"
 
     printf ' %s%78s%s \n' "│" " " "│"
@@ -244,9 +246,19 @@ main () {
     s1i=$(spli "$Istr" 1); s1r=$(spli "$Istr" 2)
     s2i=$(spli "$Pstr" 1); s2r=$(spli "$Pstr" 2)
     printf ' %s      ' "│"
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-15s' "3" "$s1i" "$s1r"
-    printf '%*s' "22" " "
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-15s' "4" "$s2i" "$s2r"
+    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "3" "$s1i" "$s1r"
+    printf '%*s' "12" " "
+    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "4" "$s2i" "$s2r"
+    printf '%*s%s \n' "6" " " "│"
+
+    printf ' %s%78s%s \n' "│" " " "│"
+
+    s1i=$(spli "$Lstr" 1); s1r=$(spli "$Lstr" 2)
+    s2i=$(spli "$Sstr" 1); s2r=$(spli "$Sstr" 2)
+    printf ' %s      ' "│"
+    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "5" "$s1i" "$s1r"
+    printf '%*s' "12" " "
+    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "6" "$s2i" "$s2r"
     printf '%*s%s \n' "6" " " "│"
 
     printf ' %s%78s%s \n' "│" " " "│"
@@ -279,9 +291,19 @@ main () {
         pmsg "Package installation finished. To return to ${myname} press ENTER"
         read -r _
         ;;
-      4|r|remove|remove-packages-and-deps )
+      4|r|p|remove|purge|remove-packages-and-deps|purge-packages )
         apt_purge
         pmsg "Package(s) purged. To return to ${myname} press ENTER"
+        read -r _
+        ;;
+      5|l|list|list-package-files )
+        list_pkg_files
+        pmsg "Operation(s) completed. To return to ${myname} press ENTER"
+        read -r _
+        ;;
+      6|s|search|search-package-files )
+        search_pkg_by_file
+        pmsg "Operation(s) completed. To return to ${myname} press ENTER"
         read -r _
         ;;
       0|q|quit|''|'\033')

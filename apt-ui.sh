@@ -141,6 +141,14 @@ list_pkg_files () {
   fi
 }
 
+# Return type: string
+# Description: returns all files from all packages separated by newline
+list_all_pkg_files () {
+  for package in $( get_installed ); do
+    dpkg -L "$package"
+  done
+}
+
 # Usage: mstrin "#" 5
 # Output: "#####"
 mstrin () {

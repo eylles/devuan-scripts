@@ -329,7 +329,7 @@ main () {
         out=1
         ;;
       * )
-        pmsg " Wrong option"
+        pmsg " Wrong option $choice"
         printf '%s\n' "  Please try again...  "
         sleep 1
         ;;

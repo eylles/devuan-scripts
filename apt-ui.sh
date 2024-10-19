@@ -270,16 +270,29 @@ menu () {
   printf '\n    > '
 
   read -r choice
-  choice="$(echo "$choice" | tr '[:upper:]' '[:lower:]' )"
   printf '\n'
 }
 
 main () {
-  choice=""
+  oneshot=""
   out=""
   while [ -z "$out" ]; do
+    choice=""
 
-    menu
+    # input parsing
+    while [ "$#" -gt 0 ]; do
+      case "$1" in
+        oneshot|-o|--oneshot) out=1; oneshot=1 ;;
+        *) choice="$1" ;;
+      esac
+      shift
+    done
+
+    if [ -z "$choice" ]; then
+      menu
+    fi
+
+    choice="$(echo "$choice" | tr '[:upper:]' '[:lower:]' )"
 
     case "$choice" in
       1|u|update|update-system )
@@ -322,7 +335,7 @@ main () {
         ;;
       esac
   done
-  clear
+  [ -z "$oneshot" ] && clear
 }
 
-main
+main "$@"

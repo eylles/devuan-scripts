@@ -295,32 +295,32 @@ main () {
     choice="$(echo "$choice" | tr '[:upper:]' '[:lower:]' )"
 
     case "$choice" in
-      1|u|update|update-system )
+      1|u|update|update-system)
         apt_upgrade
         pmsg "System updated. To return to ${myname} press ENTER"
         read -r _
         ;;
-      2|m|maintain|maintain-system )
+      2|m|maintain|maintain-system)
         apt_maintain
         pmsg "System maintenance finished. To return to ${myname} press ENTER"
         read -r _
         ;;
-      3|i|install|install-packages )
+      3|i|install|install-packages)
         apt_install
         pmsg "Package installation finished. To return to ${myname} press ENTER"
         read -r _
         ;;
-      4|r|p|remove|purge|remove-packages-and-deps|purge-packages )
+      4|r|p|remove|purge|remove-packages-and-deps|purge-packages)
         apt_purge
         pmsg "Package(s) purged. To return to ${myname} press ENTER"
         read -r _
         ;;
-      5|l|list|list-package-files )
+      5|l|list|list-package-files)
         list_pkg_files
         pmsg "Operation(s) completed. To return to ${myname} press ENTER"
         read -r _
         ;;
-      6|s|search|search-package-files )
+      6|s|search|search-package-files)
         search_pkg_by_file
         pmsg "Operation(s) completed. To return to ${myname} press ENTER"
         read -r _

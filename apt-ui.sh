@@ -220,60 +220,66 @@ Lstr="List package files"
 Sstr="Search package files"
 Qstr="Quit"
 
+menu () {
+  clear
+  printf '\n%*s \033[7m %.15s - %.15s \033[0m %*s \n' \
+    "21" " " \
+    "$myname" \
+    "Package Manager" \
+    "21" " "
+  printf ' %s%s%s \n' "┌" "$(mstrin "─" 78)" "┐"
+
+  printf ' %s%78s%s \n' "│" " " "│"
+
+  s1i=$(spli "$Ustr" 1); s1r=$(spli "$Ustr" 2)
+  s2i=$(spli "$Mstr" 1); s2r=$(spli "$Mstr" 2)
+  printf ' %s      ' "│"
+  printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "1" "$s1i" "$s1r"
+  printf '%*s' "12" " "
+  printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "2" "$s2i" "$s2r"
+  printf '%*s%s \n' "6" " " "│"
+
+  printf ' %s%78s%s \n' "│" " " "│"
+
+  s1i=$(spli "$Istr" 1); s1r=$(spli "$Istr" 2)
+  s2i=$(spli "$Pstr" 1); s2r=$(spli "$Pstr" 2)
+  printf ' %s      ' "│"
+  printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "3" "$s1i" "$s1r"
+  printf '%*s' "12" " "
+  printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "4" "$s2i" "$s2r"
+  printf '%*s%s \n' "6" " " "│"
+
+  printf ' %s%78s%s \n' "│" " " "│"
+
+  s1i=$(spli "$Lstr" 1); s1r=$(spli "$Lstr" 2)
+  s2i=$(spli "$Sstr" 1); s2r=$(spli "$Sstr" 2)
+  printf ' %s      ' "│"
+  printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "5" "$s1i" "$s1r"
+  printf '%*s' "12" " "
+  printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "6" "$s2i" "$s2r"
+  printf '%*s%s \n' "6" " " "│"
+
+  printf ' %s%78s%s \n' "│" " " "│"
+
+  printf ' %s%s%s \n' "└" "$(mstrin "─" 78)" "┘"
+
+  s1i=$(spli "$Qstr" 1); s1r=$(spli "$Qstr" 2)
+  printf '\n  %s  -  \033[7m %s \033[0m \033[1m%s\033[0m%s  \n' \
+    "Enter number or marked letter(s)" "0" "$s1i" "$s1r"
+
+  printf '\n    > '
+
+  read -r choice
+  choice="$(echo "$choice" | tr '[:upper:]' '[:lower:]' )"
+  printf '\n'
+}
+
 main () {
+  choice=""
   out=""
   while [ -z "$out" ]; do
-    clear
-    printf '\n%*s \033[7m %.15s - %.15s \033[0m %*s \n' \
-      "21" " " \
-      "$myname" \
-      "Package Manager" \
-      "21" " "
-    printf ' %s%s%s \n' "┌" "$(mstrin "─" 78)" "┐"
 
-    printf ' %s%78s%s \n' "│" " " "│"
-
-    s1i=$(spli "$Ustr" 1); s1r=$(spli "$Ustr" 2)
-    s2i=$(spli "$Mstr" 1); s2r=$(spli "$Mstr" 2)
-    printf ' %s      ' "│"
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "1" "$s1i" "$s1r"
-    printf '%*s' "12" " "
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "2" "$s2i" "$s2r"
-    printf '%*s%s \n' "6" " " "│"
-
-    printf ' %s%78s%s \n' "│" " " "│"
-
-    s1i=$(spli "$Istr" 1); s1r=$(spli "$Istr" 2)
-    s2i=$(spli "$Pstr" 1); s2r=$(spli "$Pstr" 2)
-    printf ' %s      ' "│"
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "3" "$s1i" "$s1r"
-    printf '%*s' "12" " "
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "4" "$s2i" "$s2r"
-    printf '%*s%s \n' "6" " " "│"
-
-    printf ' %s%78s%s \n' "│" " " "│"
-
-    s1i=$(spli "$Lstr" 1); s1r=$(spli "$Lstr" 2)
-    s2i=$(spli "$Sstr" 1); s2r=$(spli "$Sstr" 2)
-    printf ' %s      ' "│"
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "5" "$s1i" "$s1r"
-    printf '%*s' "12" " "
-    printf '\033[7m %s \033[0m   \033[1m%s\033[0m%-20s' "6" "$s2i" "$s2r"
-    printf '%*s%s \n' "6" " " "│"
-
-    printf ' %s%78s%s \n' "│" " " "│"
-
-    printf ' %s%s%s \n' "└" "$(mstrin "─" 78)" "┘"
-
-    s1i=$(spli "$Qstr" 1); s1r=$(spli "$Qstr" 2)
-    printf '\n  %s  -  \033[7m %s \033[0m \033[1m%s\033[0m%s  \n' \
-      "Enter number or marked letter(s)" "0" "$s1i" "$s1r"
-
-    printf '\n    > '
-
-    read -r choice
-    choice="$(echo "$choice" | tr '[:upper:]' '[:lower:]' )"
-    printf '\n'
+    menu
 
     case "$choice" in
       1|u|update|update-system )

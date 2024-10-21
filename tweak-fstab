@@ -2,23 +2,34 @@
 
 myname=${0##*/}
 
+# default compression 10
+comp=10
+
+# werether other filesystems than btrfs should get the noatime option
+other_fs=0
+
 show_usage () {
   printf '%s\n'   "Usage:"
-  printf '\t%s\n' "${myname} [tweak] | [preview] | [help]"
+  printf '\t%s\n' "${myname} [-o] [-c compression] [tweak] | [preview] | [help]"
 }
 
 show_help () {
   printf '%s\n'   "${myname}: tweak the mount options of btrfs file systems"
   show_usage
+  printf '\n%s\n' "Options:"
+  printf '%s\n'   "-o, --other-filesystem, other"
+  printf '\t%s\n' "tweak the mount options for other filesystems than btrfs, defaults to noatime."
+  printf '%s\n'   "-c N, --compression N, compression N, comp N"
+  printf '\t%s\n' "where 'N' is the compression rate for btrfs."
   printf '%s\n'   "tweak"
   printf '\t%s\n' "run the fstab tweak, you need the permissions tho, so run as root or with sudo"
   printf '%s\n'   "preview"
   printf '\t%s\n' "show what the result changes to your fstab will be without writing anything"
   printf '%s\n'   "help"
   printf '\t%s\n' "show this message, '-h' '-help' '--help' are also supported"
-  printf '%s\n'   "Rationale:"
+  printf '\n%s\n' "Rationale:"
   printf '\t%s\n' "i am very opinionated with my fstab, i like to use btrfs for '/', '/home' and"
-  printf '\t%s\n' "other storage drives mounted directl to my computer."
+  printf '\t%s\n' "other storage drives mounted directly to my computer."
   printf '\t%s\n' "'noatime' improves performance by not registering access time for inodes and"
   printf '\t%s\n' "perhaps even reduces disc usage, maybe..."
   printf '\t%s\n' "'compress=zstd:10' btrfs is one of the filesystems that support compression"
@@ -30,23 +41,67 @@ show_help () {
 }
 
 fstab_awk () {
-  awk '/btrfs/ { sub(/defaults/,"noatime,compress=zstd:10")} ; {print $0}' "$1"
+  awk -v cm="noatime,compress=zstd:${comp}" -v of="$other_fs" \
+    '
+    /btrfs/ { sub(/defaults/,cm)}
+    { if (of==1) sub(/defaults/,"noatime") }
+    { print $0 }
+    ' "$1"
 }
 
-case "$1" in
+# usage: is_num "value"
+is_num() {
+    printf %d "$1" >/dev/null 2>&1
+}
+
+# input parsing
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -c|--compression|compression|comp)
+      if is_num "$2"; then
+        case "$2" in
+          [1-9]|1[0-5])
+            comp="$2"
+            ;;
+          *)
+            printf '%s: argument for %s "%s" is not in range, using default value %s.\n' \
+              "${myname}" "$1" "$2" "$comp" >&2
+            ;;
+        esac
+      else
+        printf '%s: argument for %s "%s" is not a number\n' "${myname}" "$1" "$2" >&2
+        exit 1
+      fi
+      shift
+      ;;
+    -o|--other-filesystem|other) other_fs=1 ;;
+    *) choice="$1" ;;
+  esac
+  shift
+done
+
+
+case "$choice" in
   preview)
     echo "fstab:"
-    fstab_awk /etc/fstab
+    if [ -f /etc/old-fstab ]; then
+      fstabfile=/etc/old-fstab
+    else
+      fstabfile=/etc/fstab
+    fi
+    fstab_awk "$fstabfile"
     ;;
   tweak)
-    mv /etc/fstab /etc/old-fstab
+    if [ ! -f /etc/old-fstab ]; then
+      mv /etc/fstab /etc/old-fstab
+    fi
     fstab_awk /etc/old-fstab > /etc/fstab
     ;;
   help|-h|-help|--help)
     show_help
     ;;
   *)
-    printf '%s\n' "${myname}: does not recognize the argument ${1}"
+    printf '%s\n' "${myname}: does not recognize the argument ${choice}"
     show_usage
     exit 1
     ;;

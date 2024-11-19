@@ -90,15 +90,32 @@ main () {
   [ "$DBGOUT" = 1 ] && printf '%s\n' "${myname}: update complete"
 }
 
+show_help () {
+  printf '%s\n'   "${myname} - an apt daily update helper"
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} help | debug | dryrun | runsleep <N>"
+  printf '\n%s\n' "this script is a helper for implementing apt daily without systemd"
+  printf '%s\n'   "a quick and easy way to run this script from a cronjob, either from"
+  printf '%s\n'   "the root crontab or using anacron from cron.daily, this is up to you."
+  printf '%s\n'   "the script will first check that the system is on ac power and then will"
+  printf '%s\n'   "calculate a random time to wait between 1 second to 1 hour, if not on ac"
+  printf '%s\n'   "power it will sleep a random amount of time until it is on ac power"
+  printf '%s\n'   "after either case the script will update the apt package cache with"
+  printf '%s\n'   "'apt-get -q update' and then terminate."
+}
 
 # input parsing
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    debug)   DBGOUT=1  ;;
-    dryrun)  DRYRUN=1  ;;
-    runsleep)
+    debug|-d|--debug)   DBGOUT=1  ;;
+    dryrun|-n|--dry-run)  DRYRUN=1  ;;
+    runsleep|-r)
       shift
       RUNSLEEP="$1"
+      ;;
+    help|-h|--help)
+      show_help
+      exit 0
       ;;
     *)
       printf '%s\n' "${myname}: error, invalid argument: ${1}"

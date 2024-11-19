@@ -57,7 +57,12 @@ check_ac () {
 }
 
 rando_time () {
-  RAND_NUM=$(b_awk -v rs=$RUNSLEEP -v s="$$""$(date +%N)" 'BEGIN{srand(s);print(int(rs*rand()));}')
+  RAND_NUM=$( \
+    b_awk \
+      -v rs="$RUNSLEEP" \
+      -v s="$$""$(date +%N)" \
+      'BEGIN{srand(s);print(int(rs*rand()));}' \
+  )
   TIME=$(( RAND_NUM % RUNSLEEP ))
   [ "$DBGOUT" = 1 ] && printf '%s\n' "I will sleep ${TIME} seconds."
 }

@@ -1,0 +1,120 @@
+#!/bin/sh
+
+myname=${0##*/}
+
+die() { exec 2>&1 ; for line ; do echo "$line" ; done ; exit 1 ; }
+
+exists() { command -v "$1" > /dev/null ; }
+
+if exists mktemp ; then
+    TMPDIR=$(mktemp -d -t "${myname}-XXXX")
+else
+    tmploc="${TMPDIR:-/tmp}"
+    TMPDIR="${tmploc}/${myname}-${$}"
+    mkdir -p -- "$TMPDIR" || die "unable to create dir at: ${TMPDIR}"
+fi
+
+# directory for the fonts, $XDG_DATA_HOME/fonts is preferred
+fontdir=""
+
+legacy_fd="${HOME}/.fonts"
+
+xdg_fd="${XDG_DATA_HOME:-$HOME/.local/share}/fonts"
+
+if [ -d "$xdg_fd" ]; then
+    fontdir="$xdg_fd"
+else
+    if [ -d "$legacy_fd" ]; then
+        fontdir="$legacy_fd"
+    else
+        printf '[%s] %s\n' "$myname" "no local user font directory present, creating one"
+        mkdir -p "$xdg_fd"
+        printf '[%s] %s\n' "$myname" "created local user font directory at: ${xdg_fd}"
+        fontdir="$xdg_fd"
+    fi
+fi
+
+trap 'rm -rf "$TMPDIR"' EXIT INT QUIT TERM
+
+ARCHIVE=PowerPointViewer.exe
+URL1="https://sourceforge.net/projects/mscorefonts2/files/cabs/$ARCHIVE"
+URL2="https://web.archive.org/web/20171225132744/http://download.microsoft.com/download/E/6/7/E675FFFC-2A6D-4AB0-B3EB-27C9F8C8F696/$ARCHIVE"
+
+no_downloader=0
+
+downloader () {
+    printf '[%s] %s:\n\t\t%s\n\n' "$myname" "downloading from" "$2"
+    case "$1" in
+        curl)
+            curl -A '' -LO      "$2"
+            ;;
+        wget)
+            wget -U ''          "$2"
+            ;;
+        fetch)
+            fetch --user-agent= "$2"
+            ;;
+    esac
+}
+
+printf '[%s] %s\n' "$myname" "preparing to install vista fonts"
+if ! [ -e "$ARCHIVE" ] ; then
+    if   exists curl  ; then
+        use="curl"
+    elif exists wget  ; then
+        use="wget"
+    elif exists fetch ; then
+        use="fetch"
+    else
+        no_downloader=1
+    fi
+    if [ "$no_downloader" -eq "1" ]; then
+        die 'You have neither curl nor wget nor fetch.' \
+            'Please manually download this file first:' "$URL1"
+    else
+        # try url1
+        downloader "$use" "$URL1"
+        # try url2
+        if ! [ -e "$ARCHIVE" ] ; then
+            downloader "$use" "$URL2"
+        fi
+        if ! [ -e "$ARCHIVE" ] ; then
+            die 'Could not download from either location:' "$URL1" "$URL2"
+        fi
+    fi
+else
+    printf '[%s] %s\n' "$myname" "file $ARCHIVE is present, continuing with installation."
+fi
+
+printf '\n[%s] %s\n\n' "$myname" "extracting fonts from: $ARCHIVE"
+
+cabextract -L -F "ppviewer.cab" -d "$TMPDIR" "$ARCHIVE"
+cabextract -L -F "eula.txt" -d "$TMPDIR" "$ARCHIVE"
+
+cd "$TMPDIR" || die "could not cd to temp dir!"
+
+cabextract -L -F '*.TT[FC]' "ppviewer.cab"
+
+printf '\n[%s] %s\n' "$myname" "generating cambria.ttf and cambria-math.ttf"
+FONTFORGE_LANGUAGE=ff fontforge -c 'Open("cambria.ttc"); Generate("cambria.ttf")'
+FONTFORGE_LANGUAGE=ff fontforge -c 'Open("cambria.ttc(Cambria Math)"); Generate("cambria-math.ttf")'
+rm -f cambria.ttc
+
+# echo "files in $TMPDIR"
+
+# ls -la
+
+destdir="${fontdir}/ms-vista-fonts"
+mkdir -p "$destdir"
+
+printf '[%s] %s\n\n' "$myname" "installing fonts to: $ARCHIVE"
+
+mv --update=none eula.txt "$destdir/LICENSE/EULA"
+gzip -f -9 "$destdir/LICENSE/EULA"
+for font in "${PWD}"/*.ttf; do
+    cp --update=none "$font" "$destdir"
+done
+
+fc-cache -f "$fontdir"
+
+printf '\n%s\n' "done!"

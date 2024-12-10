@@ -6,16 +6,21 @@ myname=${0##*/}
 service_list=""
 # while the number of arguments is greater than 0
 while [ "$#" -gt 0 ]; do
-    case "$1" in
-        enable|disable|defaults|remove|defaults-disable)
-            action="$1"
-            ;;
-        *) service_list="$service_list $1"
-            ;;
-    esac
-    shift
+  case "$1" in
+    enable|disable|defaults|remove|defaults-disable)
+      action="$1"
+      ;;
+    *)
+      if [ -e "/etc/init.d/${1}" ]; then
+        service_list="$service_list $1"
+      else
+        printf '[%s]: %s\n' "$myname" "service '$1' not present in /etc/init.d/"
+      fi
+      ;;
+  esac
+  shift
 done
 
 for service in $service_list; do
-    update-rc.d "$service" "$action"
+  update-rc.d "$service" "$action"
 done

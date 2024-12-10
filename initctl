@@ -1,0 +1,21 @@
+#!/bin/sh
+
+myname=${0##*/}
+
+
+service_list=""
+# while the number of arguments is greater than 0
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        enable|disable|defaults|remove|defaults-disable)
+            action="$1"
+            ;;
+        *) service_list="$service_list $1"
+            ;;
+    esac
+    shift
+done
+
+for service in $service_list; do
+    update-rc.d "$service" "$action"
+done

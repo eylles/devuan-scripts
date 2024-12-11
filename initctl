@@ -3,12 +3,33 @@
 myname=${0##*/}
 
 
+show_help () {
+  printf '%s\n'   "${myname} - a wrapper for update-rc.d"
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} --help | [ ACTION ] <services>"
+  printf '  %s'   "ACTION"
+  printf '\t%s\n' "where action is one of the following:"
+  printf '\t\t    %s\n' "enable"
+  printf '\t\t    %s\n' "disable"
+  printf '\t\t    %s\n' "remove"
+  printf '\t\t    %s\n' "defaults"
+  printf '\t\t    %s\n' "defaults-disable"
+  printf '  %s'   "services"
+  printf '\t%s\n' "is a space separated list of the services to perform the action on"
+  printf '  %s'   "--help"
+  printf '\t%s\n' "show this message, the shortcuts '-h' and 'help' are also supported."
+}
+
 service_list=""
 # while the number of arguments is greater than 0
 while [ "$#" -gt 0 ]; do
   case "$1" in
     enable|disable|defaults|remove|defaults-disable)
       action="$1"
+      ;;
+    -h|--help|help)
+      show_help
+      exit 0
       ;;
     *)
       if [ -e "/etc/init.d/${1}" ]; then

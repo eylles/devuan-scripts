@@ -4,11 +4,15 @@ myname=${0##*/}
 
 
 show_help () {
-  printf '%s\n'   "${myname} - a wrapper for update-rc.d"
+  printf '%s\n'   "${myname} - a wrapper for update-rc.d and service"
   printf '%s\n'   "Usage:"
   printf '\t%s\n' "${myname} --help | [ ACTION ] <services>"
   printf '  %s'   "ACTION"
   printf '\t%s\n' "where action is one of the following:"
+  printf '\t\t    %s\n' "start"
+  printf '\t\t    %s\n' "stop"
+  printf '\t\t    %s\n' "restart"
+  printf '\t\t    %s\n' "reload"
   printf '\t\t    %s\n' "enable"
   printf '\t\t    %s\n' "disable"
   printf '\t\t    %s\n' "remove"
@@ -25,6 +29,11 @@ service_list=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
     enable|disable|defaults|remove|defaults-disable)
+      dispatcher=update-rc.d
+      action="$1"
+      ;;
+    start|stop|restart|reload)
+      dispatcher=service
       action="$1"
       ;;
     -h|--help|help)
@@ -42,6 +51,14 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-for service in $service_list; do
-  update-rc.d "$service" "$action"
-done
+run_dispatch () {
+  for service in $service_list; do
+    $1 "$service" "$action"
+  done
+}
+
+if [ "$dispatcher" = "service" ]; then
+  run_dispatch service
+else
+  run_dispatch update-rc.d
+fi

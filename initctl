@@ -3,6 +3,12 @@
 myname=${0##*/}
 
 
+run_dispatch () {
+  for service in $service_list; do
+    $1 "$service" "$action"
+  done
+}
+
 show_help () {
   printf '%s\n'   "${myname} - a wrapper for update-rc.d and service"
   printf '%s\n'   "Usage:"
@@ -50,12 +56,6 @@ while [ "$#" -gt 0 ]; do
   esac
   shift
 done
-
-run_dispatch () {
-  for service in $service_list; do
-    $1 "$service" "$action"
-  done
-}
 
 if [ "$dispatcher" = "service" ]; then
   run_dispatch service

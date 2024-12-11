@@ -11,7 +11,19 @@ _update () {
 }
 
 _install () {
-  pkexec apt install "$install_dir"/discord-*.*.deb -y
+  has_tty=""
+  if tty | grep -qF  -e "dev/pts"; then
+    has_tty=1
+  fi
+  if [ -n "$has_tty" ]; then
+    sudo apt install "$install_dir"/discord-*.*.deb -y
+  else
+    if [ -n "$SUDO_ASKPASS" ]; then
+      sudo -A apt install "$install_dir"/discord-*.*.deb -y
+    else
+      pkexec apt install "$install_dir"/discord-*.*.deb -y
+    fi
+  fi
 }
 
 _clean () {

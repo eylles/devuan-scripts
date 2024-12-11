@@ -9,10 +9,14 @@ run_dispatch () {
   done
 }
 
-show_help () {
-  printf '%s\n'   "${myname} - a wrapper for update-rc.d and service"
+show_usage () {
   printf '%s\n'   "Usage:"
   printf '\t%s\n' "${myname} --help | [ ACTION ] <services>"
+}
+
+show_help () {
+  printf '%s\n'   "${myname} - a wrapper for update-rc.d and service"
+  show_usage
   printf '  %s'   "ACTION"
   printf '\t%s\n' "where action is one of the following:"
   printf '\t\t    %s\n' "start"
@@ -59,6 +63,7 @@ done
 
 if [ -z "$action" ]; then
   printf '[%s]: %s\n' "${myname}" "no action was provided!"
+  show_usage
   exit 1
 fi
 

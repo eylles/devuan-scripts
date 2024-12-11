@@ -3,6 +3,10 @@
 # yeh, really...
 # but if you are reading this then you are a degenerate too!
 
+myname=${0##*/}
+
+disable_notifs=""
+
 install_dir=/tmp/discord-installer
 _update () {
   mkdir -p "$install_dir"
@@ -35,17 +39,29 @@ _better () {
   betterdiscordctl -v reinstall
 }
 
+notif_me () {
+  if [ -z "$disable_notifs" ]; then
+    notify-send -i discord-canary "$1"
+  else
+    printf '[%s]: %s\n\n' "$myname" "$1"
+  fi
+}
+
 _upgrade () {
   _clean
-  notify-send -i discord-canary "Downloading update"
+  notif_me "Downloading update"
   _update
-  notify-send -i discord-canary "Installing update"
+  notif_me "Installing update"
   _install
-  notify-send -i discord-canary "Installed update"
+  notif_me "Installed update"
   # _better
   _clean
 }
 
+if tty | grep -qF -e "dev/tty"; then
+  disable_notifs=1
+  notif_me "running inside a tty, maybe consider installing this stuff when you got a GUI"
+fi
 case "$1" in
   "update")  _update  ;;
   "upgrade") _upgrade ;;

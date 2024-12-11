@@ -57,6 +57,11 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
+if [ -z "$action" ]; then
+  printf '[%s]: %s\n' "${myname}" "no action was provided!"
+  exit 1
+fi
+
 if [ "$dispatcher" = "service" ]; then
   run_dispatch service
 else

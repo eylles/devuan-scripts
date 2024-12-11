@@ -28,8 +28,11 @@ show_help () {
   printf '\t\t    %s\n' "remove"
   printf '\t\t    %s\n' "defaults"
   printf '\t\t    %s\n' "defaults-disable"
+  printf '\t\t%s\n' "for more information on the actions check 'man service' and 'man update-rc.d'"
+  printf '\n'
   printf '  %s'   "services"
   printf '\t%s\n' "is a space separated list of the services to perform the action on"
+  printf '\n'
   printf '  %s'   "--help"
   printf '\t%s\n' "show this message, the shortcuts '-h' and 'help' are also supported."
 }

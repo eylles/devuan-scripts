@@ -5,13 +5,43 @@
 
 myname=${0##*/}
 
+config="${XDG_CONFIG_HOME:-$HOME/.config}/discord-installer/configrc"
+
 disable_notifs=""
 
+channel="stable"
+
+if [ -e "$config" ]; then
+  . "$config"
+fi
+
 install_dir=/tmp/discord-installer
+
+notif_me () {
+  if [ -z "$disable_notifs" ]; then
+    notify-send -i discord-canary "$1"
+  else
+    printf '[%s]: %s\n\n' "$myname" "$1"
+  fi
+}
+
 _update () {
   mkdir -p "$install_dir"
-  # wget -c -P "$install_dir"/ --content-disposition "https://discord.com/api/download?platform=linux&format=deb"
-  wget -c -P "$install_dir"/ --content-disposition "https://discord.com/api/download/canary?platform=linux&format=deb"
+  STABLE="https://discord.com/api/download?platform=linux&format=deb"
+  CANARY="https://discord.com/api/download/canary?platform=linux&format=deb"
+  case "$channel" in
+    stable)
+      URL="$STABLE"
+      ;;
+    canary)
+      URL="$CANARY"
+      ;;
+    *)
+      notif_me "invalid channel ${channel}, use stable or canary, exiting now."
+      exit 1
+      ;;
+  esac
+  wget -c -P "$install_dir"/ --content-disposition "$URL"
 }
 
 _install () {
@@ -37,14 +67,6 @@ _clean () {
 _better () {
   type betterdiscordctl || betterdiscordinstaller
   betterdiscordctl -v reinstall
-}
-
-notif_me () {
-  if [ -z "$disable_notifs" ]; then
-    notify-send -i discord-canary "$1"
-  else
-    printf '[%s]: %s\n\n' "$myname" "$1"
-  fi
 }
 
 _upgrade () {

@@ -97,6 +97,7 @@ main () {
 
   if [ -z "$DRYRUN" ]; then
     /usr/bin/apt-get -q update
+    logger "${myname} package index update completed"
   fi
   if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
     printf '%s\n' "${myname}: update complete"

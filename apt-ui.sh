@@ -208,6 +208,11 @@ pmsg () {
   printf ' \033[42m\033[30m %s \033[0m \n' "$@"
 }
 
+show_usage () {
+  printf '%s\n'   "Usage:"
+  printf '\t%s\n' "${myname} [OPTIONS] ACTION"
+}
+
 ###########
 # Strings #
 ###########
@@ -219,6 +224,44 @@ Pstr="Purge package"
 Lstr="List package files"
 Sstr="Search package files"
 Qstr="Quit"
+
+show_help () {
+  printf '%s\n' \
+    "${myname} - a wrapper for apt using fzf"
+  show_usage
+  printf '\n%s\n' \
+    "  oneshot, -o, --oneshot"
+  printf '\t%s\n' \
+    "perform the selected action then exit, if no action is passed the menu is"
+  printf '\t%s\n' \
+    "shown for the user to select an action, after the action finishes, regardless"
+  printf '\t%s\n' \
+    "if it was performed or cancelled ${myname} will simply exit."
+  printf '\n%s\n' \
+    "  1, u, update, update-system"
+  printf '\t%s\n' \
+    "${Ustr}, runs sudo \$aptcmd upgrade"
+  printf '\n%s\n' \
+    "  2, m, maintain, maintain-system"
+  printf '\t%s\n' \
+    "${Mstr}, uses apt-get to autoclean, autoclean and update --fix-missing"
+  printf '\n%s\n' \
+    "  3, i, install, install-packages"
+  printf '\t%s\n' \
+    "${Istr}, shows an fzf menu list of available packages to install with '\$aptcmd install'"
+  printf '\n%s\n' \
+    "  4, r, p, remove, purge, remove-packages-and-deps, purge-packages"
+  printf '\t%s\n' \
+    "${Pstr}, shows an fzf menu list of installed packages to remove with '\$aptcmd purge'"
+  printf '\n%s\n' \
+    "  5, l, list, list-package-files"
+  printf '\t%s\n' \
+    "${Lstr}, shows an fzf menu to get the list of file from a package"
+  printf '\n%s\n' \
+    "  6, s, search, search-package-files"
+  printf '\t%s\n' \
+    "${Sstr}, shows an fzf menu to query dpkg for which package provides the selected file"
+}
 
 menu () {
   clear
@@ -327,6 +370,12 @@ main () {
         ;;
       0|q|quit|''|'\033')
         out=1
+        ;;
+      h|-h|--help)
+        show_help
+        if [ -z "$oneshot" ]; then
+          read -r _
+        fi
         ;;
       * )
         pmsg " Wrong option $choice"

@@ -51,7 +51,19 @@ case "$1" in
     if [ ! "$( id -u )" -eq 0 ]; then
       main
     else
-      pkexec sudo "$0" "run"
+      has_tty=""
+      if tty | grep -qF -e "dev/tty" -e "dev/pts"; then
+        has_tty=1
+      fi
+      if [ -n "$has_tty" ]; then
+        sudo "$0" "run"
+      else
+        if [ -n "$SUDO_ASKPASS" ]; then
+          sudo -A "$0" "run"
+        else
+          pkexec sudo "$0" "run"
+        fi
+      fi
     fi
     ;;
 esac

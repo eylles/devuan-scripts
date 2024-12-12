@@ -174,6 +174,7 @@ search_pkg_by_file () {
   pkg="$( printf '%s\n' "$pkg" | paste -sd " " )"
   if [ -n "$pkg" ]; then
     dpkg -S $pkg
+    printf '\n'
   fi
 }
 

@@ -69,7 +69,9 @@ rando_time () {
       'BEGIN{srand(s);print(int(rs*rand()));}' \
   )
   TIME=$(( RAND_NUM % RUNSLEEP ))
-  [ "$DBGOUT" = 1 ] && printf '%s\n' "I will sleep ${TIME} seconds."
+  if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
+    printf '%s\n' "I will sleep ${TIME} seconds."
+  fi
 }
 
 

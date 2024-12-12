@@ -26,6 +26,11 @@ b_cat () {
   fi
 }
 
+has_tty=""
+if tty | grep -qF -e "dev/tty" -e "dev/pts"; then
+  has_tty=1
+fi
+
 # check if we are on ac power
 # return type: int
 # return:
@@ -71,14 +76,18 @@ rando_time () {
 main () {
   slept=""
   until check_ac; do
-    [ "$DBGOUT" = 1 ] && printf '%s\n' "AC not present, sleeping until it is."
+    if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
+      printf '%s\n' "AC not present, sleeping until it is."
+    fi
     rando_time
     sleep "$TIME"
     slept=1
   done
 
   if [ -z "$slept" ]; then
-    [ "$DBGOUT" = 1 ] && printf '%s\n' "sleeping a random amount of time"
+    if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
+      printf '%s\n' "sleeping a random amount of time"
+    fi
     rando_time
     sleep "$TIME"
   fi
@@ -87,7 +96,9 @@ main () {
   if [ -z "$DRYRUN" ]; then
     /usr/bin/apt-get -q update
   fi
-  [ "$DBGOUT" = 1 ] && printf '%s\n' "${myname}: update complete"
+  if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
+    printf '%s\n' "${myname}: update complete"
+  fi
 }
 
 show_help () {

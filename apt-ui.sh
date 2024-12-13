@@ -225,6 +225,7 @@ Pstr="Purge package"
 Lstr="List package files"
 Sstr="Search package files"
 Qstr="Quit"
+Hstr="Help"
 
 show_help () {
   printf '%s\n' \
@@ -308,8 +309,11 @@ menu () {
   printf ' %s%s%s \n' "└" "$(mstrin "─" 78)" "┘"
 
   s1i=$(spli "$Qstr" 1); s1r=$(spli "$Qstr" 2)
-  printf '\n  %s  -  \033[7m %s \033[0m \033[1m%s\033[0m%s  \n' \
+  s2i=$(spli "$Hstr" 1); s2r=$(spli "$Hstr" 2)
+  printf '\n  %s  -  \033[7m %s \033[0m \033[1m%s\033[0m%s  ' \
     "Enter number or marked letter(s)" "0" "$s1i" "$s1r"
+  printf '  \033[7m %s \033[0m \033[1m%s\033[0m%s  \n' \
+    "H" "$s2i" "$s2r"
 
   printf '\n    > '
 
@@ -372,7 +376,7 @@ main () {
       0|q|quit|''|'\033')
         out=1
         ;;
-      h|-h|--help)
+      h|-h|help|--help)
         show_help
         if [ -z "$oneshot" ]; then
           read -r _

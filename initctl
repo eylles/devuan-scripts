@@ -45,7 +45,7 @@ while [ "$#" -gt 0 ]; do
       dispatcher=update-rc.d
       action="$1"
       ;;
-    start|stop|restart|reload)
+    start|stop|restart|reload|status)
       dispatcher=service
       action="$1"
       ;;

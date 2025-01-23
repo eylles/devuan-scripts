@@ -12,82 +12,82 @@ disable_notifs=""
 channel="stable"
 
 if [ -e "$config" ]; then
-  . "$config"
+    . "$config"
 fi
 
 install_dir=/tmp/discord-installer
 
 notif_me () {
-  if [ -z "$disable_notifs" ]; then
-    notify-send -i discord-canary "$1"
-  else
-    printf '[%s]: %s\n\n' "$myname" "$1"
-  fi
+    if [ -z "$disable_notifs" ]; then
+        notify-send -i discord-canary "$1"
+    else
+        printf '[%s]: %s\n\n' "$myname" "$1"
+    fi
 }
 
 _update () {
-  mkdir -p "$install_dir"
-  STABLE="https://discord.com/api/download?platform=linux&format=deb"
-  CANARY="https://discord.com/api/download/canary?platform=linux&format=deb"
-  case "$channel" in
-    stable)
-      URL="$STABLE"
-      ;;
-    canary)
-      URL="$CANARY"
-      ;;
-    *)
-      notif_me "invalid channel ${channel}, use stable or canary, exiting now."
-      exit 1
-      ;;
-  esac
-  wget -c -P "$install_dir"/ --content-disposition "$URL"
+    mkdir -p "$install_dir"
+    STABLE="https://discord.com/api/download?platform=linux&format=deb"
+    CANARY="https://discord.com/api/download/canary?platform=linux&format=deb"
+    case "$channel" in
+        stable)
+            URL="$STABLE"
+        ;;
+        canary)
+            URL="$CANARY"
+        ;;
+        *)
+            notif_me "invalid channel ${channel}, use stable or canary, exiting now."
+            exit 1
+        ;;
+    esac
+    wget -c -P "$install_dir"/ --content-disposition "$URL"
 }
 
 _install () {
-  has_tty=""
-  if tty | grep -qF -e "dev/tty" -e "dev/pts"; then
-    has_tty=1
-  fi
-  if [ -n "$has_tty" ]; then
-    sudo apt install "$install_dir"/discord-*.*.deb -y
-  else
-    if [ -n "$SUDO_ASKPASS" ]; then
-      sudo -A apt install "$install_dir"/discord-*.*.deb -y
-    else
-      pkexec apt install "$install_dir"/discord-*.*.deb -y
+    has_tty=""
+    if tty | grep -qF -e "dev/tty" -e "dev/pts"; then
+        has_tty=1
     fi
-  fi
+    if [ -n "$has_tty" ]; then
+        sudo apt install "$install_dir"/discord-*.*.deb -y
+    else
+        if [ -n "$SUDO_ASKPASS" ]; then
+            sudo -A apt install "$install_dir"/discord-*.*.deb -y
+        else
+            pkexec apt install "$install_dir"/discord-*.*.deb -y
+        fi
+    fi
 }
 
 _clean () {
-  rm "$install_dir"/discord-*.*.deb
+    rm "$install_dir"/discord-*.*.deb
 }
 
 _better () {
-  type betterdiscordctl || betterdiscordinstaller
-  betterdiscordctl -v reinstall
+    type betterdiscordctl || betterdiscordinstaller
+    betterdiscordctl -v reinstall
 }
 
 _upgrade () {
-  _clean
-  notif_me "Downloading update"
-  _update
-  notif_me "Installing update"
-  _install
-  notif_me "Installed update"
-  # _better
-  _clean
+    _clean
+    notif_me "Downloading update"
+    _update
+    notif_me "Installing update"
+    _install
+    notif_me "Installed update"
+    # _better
+    _clean
 }
 
 if tty | grep -qF -e "dev/tty"; then
-  disable_notifs=1
-  notif_me "running inside a tty, maybe consider installing this stuff when you got a GUI"
+    disable_notifs=1
+    notif_me "running inside a tty, maybe consider installing this stuff when you got a GUI"
 fi
 case "$1" in
-  "update")  _update  ;;
-  "upgrade") _upgrade ;;
-  "install") _install ;;
-  "clean")   _clean   ;;
-  "better")  _better  ;;
+    "update")  _update  ;;
+    "upgrade") _upgrade ;;
+    "install") _install ;;
+    "clean")   _clean   ;;
+    "better")  _better  ;;
 esac

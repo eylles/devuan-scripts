@@ -47,13 +47,13 @@ downloader () {
     case "$1" in
         curl)
             curl -A '' -LO      "$2"
-            ;;
+        ;;
         wget)
             wget -U ''          "$2"
-            ;;
+        ;;
         fetch)
             fetch --user-agent= "$2"
-            ;;
+        ;;
     esac
 }
 

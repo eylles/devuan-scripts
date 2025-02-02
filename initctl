@@ -1,7 +1,16 @@
 #!/bin/sh
 
+################################################################################
+#### A wrapper around update-rc.d(8) and service(8)                         ####
+#### to feel similar to systemctl and dispatch actions to multiple services ####
+################################################################################
+
 myname=${0##*/}
 
+# return type: string
+get_header_comment () {
+    sed -n '/^#### /p' "$0" | sed 's/^#### /\t/ ; s/ ####$//'
+}
 
 run_dispatch () {
     for service in $service_list; do
@@ -15,7 +24,8 @@ show_usage () {
 }
 
 show_help () {
-    printf '%s\n'   "${myname} - a wrapper for update-rc.d and service"
+    printf '%s\n'   "${myname}"
+    get_header_comment
     show_usage
     printf '  %s'   "ACTION"
     printf '\t%s\n' "where action is one of the following:"

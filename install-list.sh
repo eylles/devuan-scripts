@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#################################################################################
+#### a configurable script to quickly install or reinstall lists of packages ####
+#################################################################################
+
 myname=${0##*/}
 
 packages="
@@ -191,6 +195,11 @@ printer-driver-postscript-hp
 system-config-printer
 "
 
+# return type: string
+get_header_comment () {
+    sed -n '/^#### /p' "$0" | sed 's/^#### /\t/ ; s/ ####$//'
+}
+
 show_usage () {
     printf '%s\n'   "Usage:"
     printf '\t%s\n' "${myname} debug | help | install [LIST] | reinstall [LIST]"
@@ -198,7 +207,8 @@ show_usage () {
 
 # Usage: show_help
 show_help () {
-    printf '%s\n'   "${myname}: quickly install or reinstall lists of packages"
+    printf '%s\n'   "${myname}"
+    get_header_comment
     show_usage
     printf '%s\n'   "[LIST]:"
     printf '\t%s\n' "the list of programs to install/reinstall, you can pass the list 'all'"

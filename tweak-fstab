@@ -1,5 +1,9 @@
 #!/bin/sh
 
+######################################################################################
+#### tweak the mount options of btrfs file systems for performance and efficiency ####
+######################################################################################
+
 myname=${0##*/}
 
 # default compression 10
@@ -13,8 +17,14 @@ show_usage () {
     printf '\t%s\n' "${myname} [-o] [-c compression] [tweak] | [preview] | [help]"
 }
 
+# return type: string
+get_header_comment () {
+    sed -n '/^#### /p' "$0" | sed 's/^#### /\t/ ; s/ ####$//'
+}
+
 show_help () {
-    printf '%s\n'   "${myname}: tweak the mount options of btrfs file systems"
+    printf '%s\n'   "${myname}:"
+    get_header_comment
     show_usage
     printf '\n%s\n' "Options:"
     printf '%s\n'   "-o, --other-filesystem, other"

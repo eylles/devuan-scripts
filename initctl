@@ -7,15 +7,40 @@
 
 myname=${0##*/}
 
+# program to run the action on the service
+# can be "update-rc.d" or "service"
+dispatcher=""
+
+# action to be performed on the service
+# can be:
+#     "start"
+#     "stop"
+#     "restart"
+#     "reload"
+#     "enable"
+#     "disable"
+#     "remove"
+#     "defaults"
+#     "defaults-disable"
+action=""
+
+# service file to have an action performed on
+service=""
+
 # return type: string
 get_header_comment () {
     sed -n '/^#### /p' "$0" | sed 's/^#### /\t/ ; s/ ####$//'
 }
 
+# usage: run_dispatch dispatcher service action
 run_dispatch () {
-    for service in $service_list; do
-        $1 "$service" "$action"
-    done
+    case "$1" in
+        service|update-rc.d)
+            # sbin may not be in user's path
+            run_com="/usr/sbin/${1}"
+            $run_com "$2" "$3"
+            ;;
+    esac
 }
 
 show_usage () {
@@ -65,24 +90,13 @@ while [ "$#" -gt 0 ]; do
             exit 0
         ;;
         *)
-            if [ -e "/etc/init.d/${1}" ]; then
-                service_list="$service_list $1"
+            service="$1"
+            if [ -e "/etc/init.d/${service}" ]; then
+                run_dispatch "$dispatcher" "$service" "$action"
             else
-                printf '[%s]: %s\n' "$myname" "service '$1' not present in /etc/init.d/"
+                printf '[%s]: %s\n' "$myname" "service '$service' not present in /etc/init.d/"
             fi
         ;;
     esac
     shift
 done
-
-if [ -z "$action" ]; then
-    printf '[%s]: %s\n' "${myname}" "no action was provided!"
-    show_usage
-    exit 1
-fi
-
-if [ "$dispatcher" = "service" ]; then
-    run_dispatch service
-else
-    run_dispatch update-rc.d
-fi

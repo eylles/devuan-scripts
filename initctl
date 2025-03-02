@@ -27,6 +27,9 @@ action=""
 # service file to have an action performed on
 service=""
 
+# werether to perform the action or only print out the command to run
+DRYRUN=""
+
 # return type: string
 get_header_comment () {
     sed -n '/^#### /p' "$0" | sed 's/^#### /\t/ ; s/ ####$//'
@@ -38,7 +41,11 @@ run_dispatch () {
         service|update-rc.d)
             # sbin may not be in user's path
             run_com="/usr/sbin/${1}"
-            $run_com "$2" "$3"
+            if [ -z "$DRYRUN" ]; then
+                $run_com "$2" "$3"
+            else
+                printf '%s %s %s\n' "$run_com" "$2" "$3"
+            fi
             ;;
     esac
 }
@@ -88,6 +95,9 @@ while [ "$#" -gt 0 ]; do
         -h|--help|help)
             show_help
             exit 0
+        ;;
+        -n|--dryrun|dryrun)
+            DRYRUN=1
         ;;
         *)
             service="$1"

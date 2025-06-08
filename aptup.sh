@@ -74,6 +74,14 @@ rando_time () {
     fi
 }
 
+do_sleep () {
+    if [ -z "$DRYRUN" ]; then
+        sleep "$TIME"
+    else
+        sleep 2
+    fi
+}
+
 
 main () {
     slept=""
@@ -82,7 +90,7 @@ main () {
             printf '%s\n' "AC not present, sleeping until it is."
         fi
         rando_time
-        sleep "$TIME"
+        do_sleep "$TIME"
         slept=1
     done
 
@@ -91,7 +99,7 @@ main () {
             printf '%s\n' "sleeping a random amount of time"
         fi
         rando_time
-        sleep "$TIME"
+        do_sleep "$TIME"
     fi
 
 

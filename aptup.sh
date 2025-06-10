@@ -62,13 +62,17 @@ check_ac () {
 }
 
 rando_time () {
+    sleep_truncater="$RUNSLEEP"
+    if [ -n "$1" ]; then
+        sleep_truncater="$1"
+    fi
     RAND_NUM=$( \
         b_awk \
             -v rs="$RUNSLEEP" \
             -v s="$$""$(date +%N)" \
             'BEGIN{srand(s);print(int(rs*rand()));}' \
     )
-    TIME=$(( RAND_NUM % RUNSLEEP ))
+    TIME=$(( RAND_NUM % sleep_truncater ))
     if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
         printf '%s\n' "I will sleep ${TIME} seconds."
     fi
@@ -89,7 +93,7 @@ main () {
         if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
             printf '%s\n' "AC not present, sleeping until it is."
         fi
-        rando_time
+        rando_time 1800
         do_sleep "$TIME"
         slept=1
     done

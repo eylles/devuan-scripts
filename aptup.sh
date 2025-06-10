@@ -6,7 +6,11 @@ DBGOUT=""
 DRYRUN=""
 TIME=""
 RAND_NUM=""
-RUNSLEEP=3600
+# Hour Seconds
+H_S=3600
+# Sleep for Hours
+SfH=3
+RUNSLEEP=$(( H_S * SfH ))
 
 # use busybox awk whenever possible
 b_awk () {
@@ -124,9 +128,9 @@ show_help () {
     printf '%s\n'   "a quick and easy way to run this script from a cronjob, either from"
     printf '%s\n'   "the root crontab or using anacron from cron.daily, this is up to you."
     printf '%s\n'   "the script will first check that the system is on ac power and then will"
-    printf '%s\n'   "calculate a random time to wait between 1 second to 1 hour, if not on ac"
+    printf '%s\n'   "calculate a random time to wait between 1 second to ${SfH} hours, if not on ac"
     printf '%s\n'   "power it will sleep a random amount of time (between one second and half hour)"
-    pirntf '%s\n'   "until it is on ac power."
+    printf '%s\n'   "until it is on ac power."
     printf '%s\n'   "after either case the script will update the apt package cache with"
     printf '%s\n'   "'apt-get -q update' and then terminate."
 }

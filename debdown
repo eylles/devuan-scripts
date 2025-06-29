@@ -1,0 +1,47 @@
+#!/bin/sh
+
+myname="${0##*/}"
+
+# usage: check_cmd command
+#     returns 1 if command exists
+check_cmd_exist(){
+    [ "$(command -v "$1" 2>/dev/null)" ] && printf '1\n'
+}
+
+can_dld=$(check_cmd_exist "dld")
+
+show_help () {
+  printf 'Usage: %s < package(s) >\n' "${myname}"
+  printf '\tDownload .deb archive for the input package\n'
+}
+
+deb_url () {
+  url=$(apt-get install --reinstall --print-uris -qq "$1" | cut -d"'" -f2 | grep "/${1}_")
+  printf '%s\n' "$url"
+}
+
+deb_down () {
+  PKG="$1"
+  url=$(deb_url "$PKG")
+  printf '%s\n\t%s\n\n' "${myname}: downloading '$PKG' from url:" "'$url'"
+  if [ "$can_dld" = 1 ]; then
+    dld "$url"
+  else
+    wget "$url"
+  fi
+}
+
+
+
+########
+# main #
+########
+
+if [ "${#}" -eq 0 ]; then
+  show_help
+else
+  while [ "${#}" -gt 0 ]; do
+    deb_down "$1"
+    shift
+  done
+fi

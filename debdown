@@ -13,6 +13,9 @@ can_dld=$(check_cmd_exist "dld")
 show_help () {
     printf 'Usage: %s < package(s) >\n' "${myname}"
     printf '\tDownload .deb archive for the input package\n'
+    printf '%s\n' "Options"
+    printf '  %s' "-h, --help, help"
+    printf '    %s\n' "show this help."
 }
 
 deb_url () {
@@ -40,8 +43,23 @@ deb_down () {
 if [ "${#}" -eq 0 ]; then
     show_help
 else
+    arguments=""
     while [ "${#}" -gt 0 ]; do
-        deb_down "$1"
+        case "$1" in
+            help|-h|--help)
+                show_help
+                exit 0
+                ;;
+            *)
+                arguments="$arguments $1"
+                ;;
+        esac
         shift
+    done
+    # we do want word splitting here
+    # shellcheck disable=SC2086
+    set -- $arguments
+    for arg in "$@"; do
+        deb_down "$arg"
     done
 fi

@@ -35,6 +35,15 @@ if tty | grep -qF -e "dev/tty" -e "dev/pts"; then
     has_tty=1
 fi
 
+# usage: msg_log "level" "message"
+# log message
+msg_log () {
+    loglevel="$1"
+    shift
+    message="$*"
+    logger -t "$myname" -p "cron.${loglevel}" "$message"
+}
+
 # check if we are on ac power
 # return type: int
 # return:
@@ -113,7 +122,7 @@ main () {
 
     if [ -z "$DRYRUN" ]; then
         /usr/bin/apt-get -q update
-        logger -t "${myname}" "package index update completed"
+        msg_log "info" "package index update completed"
     fi
     if [ "$DBGOUT" = 1 ] || [ "$has_tty" = 1 ]; then
         printf '%s\n' "${myname}: update complete"

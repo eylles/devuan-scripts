@@ -41,7 +41,7 @@ msg_log () {
     loglevel="$1"
     shift
     message="$*"
-    logger -t "$myname" -p "cron.${loglevel}" "$message"
+    logger -i -t "$myname" -p "cron.${loglevel}" "$message"
 }
 
 # check if we are on ac power

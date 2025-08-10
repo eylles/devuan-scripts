@@ -8,6 +8,9 @@ myname="${0##*/}"
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
+DRYRUN=""
+INTERACTIVE=""
+
 progressbar_process_wait_spinner() {
     count=0
     spinSymbol=0
@@ -66,13 +69,42 @@ get_trimable_fs () {
         b_awk '{print $1}'
 }
 
-for fs in $(get_trimable_fs); do
-    [ -z "$1" ] || printf '%s\n' "sending trim to $fs"
-    if [ -z "$1" ]; then
-        msg_log "info" "initiating fstrim on $fs"
-        fstrim "$fs"
-    else
-        fstrim "$fs" &
+do_trim () {
+    if [ -z "$DRYRUN" ]; then
+        fstrim "$1"
     fi
-    [ -z "$1" ] || progressbar_process_wait_spinner $! "waiting for fstrim on: $fs  "
+}
+
+trim_every_fs () {
+    for fs in $(get_trimable_fs); do
+        [ -n "$INTERACTIVE" ] && printf '%s\n' "sending trim to $fs"
+        if [ -z "$INTERACTIVE" ]; then
+            msg_log "info" "initiating fstrim on $fs"
+            do_trim "$fs"
+        else
+            do_trim "$fs" &
+            progressbar_process_wait_spinner $! "waiting for fstrim on: $fs  "
+        fi
+    done
+}
+
+if [ "$#" -gt 0 ]; then
+    INTERACTIVE=1
+fi
+
+# input parsing
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        dryrun|-n|--dry-run)  DRYRUN=1  ;;
+        i|interactive|-i)
+            : # nothing to do, interactive mode already enabled
+            ;;
+        *)
+            printf '%s\n' "${myname}: error, invalid argument: ${1}"
+            exit 1
+        ;;
+    esac
+    shift
 done
+
+trim_every_fs

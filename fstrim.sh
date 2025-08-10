@@ -42,7 +42,31 @@ msg_log () {
     logger -t "$myname" -p "cron.${loglevel}" "$message"
 }
 
-for fs in $(lsblk -o MOUNTPOINT,DISC-MAX,FSTYPE | grep -E '^/.* [1-9]+.* ' | awk '{print $1}'); do
+# use busybox awk whenever possible
+b_awk () {
+    if [ -x /usr/bin/busybox ]; then
+        busybox awk "$@"
+    else
+        awk "$@"
+    fi
+}
+
+# use busybox grep whenever possible
+b_grep () {
+    if [ -x /usr/bin/busybox ]; then
+        busybox grep "$@"
+    else
+        grep "$@"
+    fi
+}
+
+get_trimable_fs () {
+    lsblk -o MOUNTPOINT,DISC-MAX,FSTYPE | \
+        b_grep -E '^/.* [1-9]+.* ' | \
+        b_awk '{print $1}'
+}
+
+for fs in $(get_trimable_fs); do
     [ -z "$1" ] || printf '%s\n' "sending trim to $fs"
     if [ -z "$1" ]; then
         msg_log "info" "initiating fstrim on $fs"

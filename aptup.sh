@@ -10,7 +10,6 @@ RAND_NUM=""
 H_S=3600
 # Sleep for Hours
 SfH=3
-RUNSLEEP=$(( H_S * SfH ))
 
 # use busybox awk whenever possible
 b_awk () {
@@ -20,6 +19,8 @@ b_awk () {
         awk "$@"
     fi
 }
+
+RUNSLEEP=$(b_awk -v sec="$H_S" -v hour="$SfH" 'BEGIN {printf "%d\n", sec*hour}')
 
 # use busybox cat whenever possible
 b_cat () {

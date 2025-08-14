@@ -8,8 +8,38 @@ TIME=""
 RAND_NUM=""
 # Hour Seconds
 H_S=3600
+def_SfH=3
 # Sleep for Hours
-SfH=3
+SfH=""
+
+# Usage: getval "KEY" file default
+# Return: string
+# Description:
+#   Read a KEY=VALUE file and retrieve the Value of the passed KEY
+getval(){
+  # Setting 'IFS' tells 'read' where to split the string.
+  while IFS='=' read -r key val; do
+    # Skip over lines containing comments.
+    # (Lines starting with '#').
+    [ "${key##\#*}" ] || continue
+
+    # '$key' stores the key.
+    # '$val' stores the value.
+    if [ "$key" = "$1" ]; then
+      printf '%s\n' "$val"
+    fi
+  done < "$2"
+}
+
+CONFIG="/etc/apt/aptup.conf"
+
+if [ -r "$CONFIG" ]; then
+    SfH=$(getval "SLEEP_FOR_HOURS" "$CONFIG")
+fi
+
+if [ -z "$SfH" ]; then
+    SfH="$def_SfH"
+fi
 
 # use busybox awk whenever possible
 b_awk () {
@@ -143,6 +173,10 @@ show_help () {
     printf '%s\n'   "until it is on ac power."
     printf '%s\n'   "after either case the script will update the apt package cache with"
     printf '%s\n'   "'apt-get -q update' and then terminate."
+    printf '\n%s\n' "CONFIG"
+    printf '%s\n'   "the config file is to be located at '$CONFIG' as a key=val file"
+    printf '%s\n'   "that contains the SLEEP_FOR_HOURS key and admits a FLOAT value for defining"
+    printf '%s\n'   "the maximum amount of hours to sleep before updating the apt index."
 }
 
 # input parsing

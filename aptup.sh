@@ -9,8 +9,10 @@ RAND_NUM=""
 # Hour Seconds
 H_S=3600
 def_SfH=3
-# Sleep for Hours
+# Sleep for Hours, by default 3 hours
 SfH=""
+
+CONFIG="/etc/apt/aptup.conf"
 
 # Usage: getval "KEY" file default
 # Return: string
@@ -31,10 +33,18 @@ getval(){
   done < "$2"
 }
 
-CONFIG="/etc/apt/aptup.conf"
+# return type: boolean
+# usage: is_num "value"
+# description: check if passed value is a number
+is_num() {
+    printf %f "$1" >/dev/null 2>&1
+}
 
 if [ -r "$CONFIG" ]; then
     SfH=$(getval "SLEEP_FOR_HOURS" "$CONFIG")
+    if ! is_num "$SfH"; then
+        SfH=""
+    fi
 fi
 
 if [ -z "$SfH" ]; then

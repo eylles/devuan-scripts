@@ -1,0 +1,43 @@
+#!/bin/sh
+
+myname="${0##*/}"
+
+prog="/usr/bin/yt-dlp"
+
+browser=$(xdg-settings get default-web-browser \
+    | sed 's/\.desktop//; s/-browser//')
+
+keyring=$(pgrep -a "keyring|kwallet|kdewallet" | cut -d" " -f2)
+
+case "$keyring" in
+    *gnome*)
+        keyring="gnomekeyring"
+        ;;
+    *wallet*)
+        keyring="kwallet"
+        ;;
+esac
+
+if [ "$#" -gt 0 ]; then
+    case "$1" in
+        -h|--help)
+            printf '%s\n'   "${myname}: yt-dlp wrapper"
+            printf '  %s\n' "this wrapper will set the cookies-from-browser flag"
+            printf '  %s\n' "as '--cookies-from-browser \${browser}+\${keyring}'"
+            printf '  %s\n' "    the web browser name is determined with:"
+            printf '  %s\n' "      'xdg-settings get default-web-browser'"
+            printf '  %s\n' "    the keyring name is searched with:"
+            printf '  %s\n' "      pgrep -a 'keyring|kwallet|kdewallet'"
+            printf '  %s\n' "currently it expands to:"
+            printf '  %s\n' "  --cookies-from-browser ${browser}+${keyring}"
+            printf '\n'
+            ;;
+    esac
+else
+    printf '%s\n' "${myname}: no arguments passed!"
+    exit 1
+fi
+
+exec $prog \
+    --cookies-from-browser "${browser}"+"${keyring}" \
+    "$@"

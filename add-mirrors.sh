@@ -51,8 +51,9 @@ distro_info () {
 # devuan suite names #
 ######################
 
-dev_stab=daedalus
-dev_test=excalibur
+dev_otab=daedalus
+dev_stab=excalibur
+dev_test=freia
 dev_unst=ceres
 
 
@@ -60,8 +61,9 @@ dev_unst=ceres
 # debian suite names #
 ######################
 
-deb_stab=bookworm
-deb_test=trixie
+deb_otab=bookworm
+deb_stab=trixie
+deb_test=forky
 deb_unst=sid
 
 ######################
@@ -82,6 +84,8 @@ deb_urls="${deb_urls} deb.debian.org"
 urls=""
 # archive type, "debian" for debian and "merged" for devuan
 archive=""
+# old-stable suite, ie bookworm or daedalus
+u_otab=""
 # stable suite, ie bookworm or daedalus
 u_stab=""
 # testing suite, ie trixie or excalibur
@@ -93,6 +97,7 @@ case "${distro_type}" in
     debian)
         urls=${deb_urls}
         archive="debian"
+        u_otab="$deb_otab"
         u_stab="$deb_stab"
         u_test="$deb_test"
         u_unst="$deb_unst"
@@ -100,6 +105,7 @@ case "${distro_type}" in
     devuan)
         urls=${dev_urls}
         archive="merged"
+        u_otab="$dev_otab"
         u_stab="$dev_stab"
         u_test="$dev_test"
         u_unst="$dev_unst"
@@ -144,13 +150,21 @@ print_deb_url () {
             printurl "${1}" "${u_stab}"
             printurl "${1}" "${u_stab}" "security"
             printurl "${1}" "${u_stab}" "updates"
+            printurl "${1}" "${u_stab}" "proposed-updates"
             printurl "${1}" "${u_stab}" "backports"
+        ;;
+        old-stable)
+            printf '%s\n' "# mirror ${1}"
+            printurl "${1}" "${u_otab}"
+            printurl "${1}" "${u_otab}" "security"
+            printurl "${1}" "${u_otab}" "updates"
+            printurl "${1}" "${u_otab}" "backports"
         ;;
     esac
 }
 
 # Usage: apt_sources "suite"
-# Suite: stable, testing, unstable
+# Suite: old-stable, stable, testing, unstable
 apt_sources () {
     case ${1} in
         unstable)
@@ -161,6 +175,9 @@ apt_sources () {
         ;;
         stable)
             suite=stable
+        ;;
+        old-stable)
+            suite=old-stable
         ;;
     esac
     echo "############################"
@@ -189,10 +206,12 @@ show_help () {
     printf '\t%s\n' "/etc/apt/sources.list WILL be the current codenames as defined"
     printf '\t%s\n' "by the script's internal variables, which are:"
     printf '\t%s\n' "for devuan:"
+    printf '\t\t%s\n' "\$dev_otab: ${dev_otab}"
     printf '\t\t%s\n' "\$dev_stab: ${dev_stab}"
     printf '\t\t%s\n' "\$dev_test: ${dev_test}"
     printf '\t\t%s\n' "\$dev_unst: ${dev_unst}"
     printf '\t%s\n' "for debian:"
+    printf '\t\t%s\n' "\$deb_otab: ${deb_otab}"
     printf '\t\t%s\n' "\$deb_stab: ${deb_stab}"
     printf '\t\t%s\n' "\$deb_test: ${deb_test}"
     printf '\t\t%s\n' "\$deb_unst: ${deb_unst}"
@@ -253,8 +272,15 @@ case ${1} in
                 stable|"${deb_stab}"|"${dev_stab}")
                     distro_info
                     echo "the following settings will be applied:"
+                    printf '%s\n' "apt: install usrmerge"
                     printf '%s\n' "apt sources: ${2} suite"
                     apt_sources "stable"
+                ;;
+                old-stable|"${deb_otab}"|"${dev_otab}")
+                    distro_info
+                    echo "the following settings will be applied:"
+                    printf '%s\n' "apt sources: ${2} suite"
+                    apt_sources "old-stable"
                 ;;
                 *)
                     printf '%s' "no valid suite chosen, choose from the current"
@@ -284,6 +310,13 @@ case ${1} in
         apt update
     ;;
     stable|"${deb_stab}"|"${dev_stab}")
+        distro_info
+        apt install usrmerge
+        mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
+        apt_sources "stable" > /etc/apt/sources.list
+        apt update
+    ;;
+    old-stable|"${deb_otab}"|"${dev_otab}")
         distro_info
         mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
         apt_sources "stable" > /etc/apt/sources.list

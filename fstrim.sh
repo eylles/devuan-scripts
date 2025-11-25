@@ -71,7 +71,7 @@ get_trimable_fs () {
 
 do_trim () {
     if [ -z "$DRYRUN" ]; then
-        fstrim "$1"
+        fstrim --verbose "$1"
     fi
 }
 

@@ -66,6 +66,7 @@ b_grep () {
 get_trimable_fs () {
     lsblk -o MOUNTPOINT,DISC-MAX,FSTYPE | \
         b_grep -E '^/.* [1-9]+.* ' | \
+        b_grep -F -e 'btrfs' -e 'ext4' -e 'xfs' -e 'vfat' | \
         b_awk '{print $1}'
 }
 
@@ -100,8 +101,10 @@ show_help () {
     printf '%s\n'   "a quick and easy way to run this script from a cronjob, either from"
     printf '%s\n'   "the root crontab or using anacron from cron.weekly, this is up to you."
     printf '%s\n'   "The script will first gather a list of the filesystems that can be trimmed"
-    printf '%s\n'   "by checking that the DISC-MAX bytes are greater than 0, then it will use the"
-    printf '%s\n'   "util-linux program 'fstrim' to dispatch a trim operation to every filesystem."
+    printf '%s\n'   "by checking that the DISC-MAX bytes are greater than 0, it will check the type"
+    printf '%s\n'   "of the filesystem to ensure it is one of 'btrfs', 'ext4', 'xfs' or 'vfat' and"
+    printf '%s\n'   "then it will use the util-linux program 'fstrim' to dispatch a trim operation"
+    printf '%s\n'   "to every filesystem."
     printf '\n%s\n' "For normal operation, ie ran from a cronjob, the script will log the start of"
     printf '%s\n'   "every fstrim operation into the cron spool with level info."
 }

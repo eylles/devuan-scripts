@@ -8,6 +8,8 @@ myname="${0##*/}"
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
+LOG=/var/log/trim.log
+
 DRYRUN=""
 INTERACTIVE=""
 
@@ -72,7 +74,7 @@ get_trimable_fs () {
 
 do_trim () {
     if [ -z "$DRYRUN" ]; then
-        fstrim --verbose "$1"
+        fstrim --verbose "$1" >> "$LOG" 2>&1
     fi
 }
 
@@ -128,4 +130,7 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+if [ -z "$DRYRUN" ]; then
+    date +"[%F %T]" >> "$LOG"
+fi
 trim_every_fs

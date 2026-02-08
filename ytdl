@@ -2,7 +2,28 @@
 
 myname="${0##*/}"
 
-prog="/usr/bin/yt-dlp"
+# program installed by apt
+prog_sys="/usr/bin/yt-dlp"
+
+# program installed by pipx and exported to your local bin path
+prog_loc="$HOME/.local/bin/yt-dlp"
+
+# program installed by pip in a venv
+prog_vev="$VIRTUAL_ENV/bin/yt-dlp"
+
+# the program
+prog=""
+
+if [ -x "$prog_sys" ]; then
+    prog="$prog_sys"
+elif [ -x "$prog_loc" ] && [ "$0" != "$(readlink "$prog_loc")" ]; then
+    prog="$prog_loc"
+elif [ -x "$prog_vev" ]; then
+    prog="$prog_vev"
+else
+    printf '%s\n' "${myname}: no executable found by wrapper!"
+    exit 1
+fi
 
 browser=$(xdg-settings get default-web-browser \
     | sed 's/\.desktop//; s/-browser//')

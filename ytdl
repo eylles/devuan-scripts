@@ -51,6 +51,8 @@ if [ "$#" -gt 0 ]; then
             printf '  %s\n' "      pgrep -a 'keyring|kwallet|kdewallet'"
             printf '  %s\n' "currently it expands to:"
             printf '  %s\n' "  --cookies-from-browser ${browser}+${keyring}"
+            printf '  %s\n' "using the binary from:"
+            printf '  %s\n' "  $prog"
             printf '\n'
             ;;
     esac

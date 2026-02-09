@@ -2,14 +2,17 @@
 
 myname="${0##*/}"
 
+# yt-dlp
+prog_name="yt-dlp"
+
 # program installed by apt
-prog_sys="/usr/bin/yt-dlp"
+prog_sys="/usr/bin/$prog_name"
 
 # program installed by pipx and exported to your local bin path
-prog_loc="$HOME/.local/bin/yt-dlp"
+prog_loc="$HOME/.local/bin/$prog_name"
 
 # program installed by pip in a venv
-prog_vev="$VIRTUAL_ENV/bin/yt-dlp"
+prog_vev="$VIRTUAL_ENV/bin/$prog_name"
 
 # the program
 prog=""
@@ -44,7 +47,7 @@ esac
 if [ "$#" -gt 0 ]; then
     case "$1" in
         -h|--help)
-            printf '%s\n'   "${myname}: yt-dlp wrapper"
+            printf '%s\n'   "${myname}: $prog_name wrapper"
             printf '  %s\n' "this wrapper will set the cookies-from-browser flag"
             printf '  %s\n' "as '--cookies-from-browser \${browser}+\${keyring}'"
             printf '  %s\n' "    the web browser name is determined with:"

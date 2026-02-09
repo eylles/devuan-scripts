@@ -2,14 +2,17 @@
 
 myname="${0##*/}"
 
+# gallery-dl
+prog_name="gallery-dl"
+
 # program installed by apt
-prog_sys="/usr/bin/gallery-dl"
+prog_sys="/usr/bin/$prog_name"
 
 # program installed by pipx and exported to your local bin path
-prog_loc="$HOME/.local/bin/gallery-dl"
+prog_loc="$HOME/.local/bin/$prog_name"
 
 # program installed by pip in a venv
-prog_vev="$VIRTUAL_ENV/bin/gallery-dl"
+prog_vev="$VIRTUAL_ENV/bin/$prog_name"
 
 # the program
 prog=""
@@ -26,7 +29,6 @@ if [ -z "$prog" ]; then
     printf '%s\n' "${myname}: no executable found by wrapper!"
     exit 1
 fi
-
 
 browser=$(xdg-settings get default-web-browser \
     | sed 's/\.desktop//; s/-browser//')
@@ -45,7 +47,7 @@ esac
 if [ "$#" -gt 0 ]; then
     case "$1" in
         -h|--help)
-            printf '%s\n'   "${myname}: gallery-dl wrapper"
+            printf '%s\n'   "${myname}: $prog_name wrapper"
             printf '  %s\n' "this wrapper sets some commong flags for gallery-dl:"
             printf '  %s\n' "  --sleep-request        15-45"
             printf '  %s\n' "  --sleep                 2-10"

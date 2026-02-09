@@ -2,7 +2,31 @@
 
 myname="${0##*/}"
 
-prog="/usr/bin/gallery-dl"
+# program installed by apt
+prog_sys="/usr/bin/gallery-dl"
+
+# program installed by pipx and exported to your local bin path
+prog_loc="$HOME/.local/bin/gallery-dl"
+
+# program installed by pip in a venv
+prog_vev="$VIRTUAL_ENV/bin/gallery-dl"
+
+# the program
+prog=""
+
+if [ -x "$prog_sys" ]; then
+    prog="$prog_sys"
+fi
+if [ -x "$prog_loc" ] && [ "$0" != "$(readlink "$prog_loc")" ]; then
+    prog="$prog_loc"
+elif [ -x "$prog_vev" ]; then
+    prog="$prog_vev"
+fi
+if [ -z "$prog" ]; then
+    printf '%s\n' "${myname}: no executable found by wrapper!"
+    exit 1
+fi
+
 
 browser=$(xdg-settings get default-web-browser \
     | sed 's/\.desktop//; s/-browser//')
@@ -32,6 +56,8 @@ if [ "$#" -gt 0 ]; then
             printf '  %s\n' "      pgrep -a 'keyring|kwallet|kdewallet'"
             printf '  %s\n' "currently it expands to:"
             printf '  %s\n' "  --cookies-from-browser ${browser}+${keyring}"
+            printf '  %s\n' "using the binary from:"
+            printf '  %s\n' "  $prog"
             printf '\n'
             ;;
     esac

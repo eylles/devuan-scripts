@@ -225,6 +225,7 @@ Lstr="List package files"
 Sstr="Search package files"
 Qstr="Quit"
 Hstr="Help"
+Kstr="Keybinds"
 
 show_help () {
     printf '%s\n' \
@@ -262,6 +263,19 @@ show_help () {
         "  6, s, search, search-package-files"
     printf '\t%s\n' \
         "${Sstr}, shows an fzf menu to query dpkg for which package provides the selected file"
+}
+
+show_keybinds () {
+    printf '  %s\n' "Keybinds to navigate the fzf window:"
+    printf '  %s\n' "  ctrl-k   up"
+    printf '  %s\n' "  ctrl-j   down"
+    printf '  %s\n' "  alt-k    preview-up"
+    printf '  %s\n' "  alt-j    preview-down"
+    printf '  %s\n' "  pgdn     half-page-down"
+    printf '  %s\n' "  pgup     half-page-up"
+    printf '  %s\n' "  tab      select item"
+    printf '  %s\n' "  enter    accept selected (item under cursor or multi-sel)"
+    printf '  %s\n' "  esc      cancel without selection"
 }
 
 menu () {
@@ -311,8 +325,11 @@ menu () {
     s2i=$(spli "$Hstr" 1); s2r=$(spli "$Hstr" 2)
     printf '\n  %s  -  \033[7m %s \033[0m \033[1m%s\033[0m%s  ' \
         "Enter number or marked letter(s)" "0" "$s1i" "$s1r"
-    printf '  \033[7m %s \033[0m \033[1m%s\033[0m%s  \n' \
+    printf '  \033[7m %s \033[0m \033[1m%s\033[0m%s  ' \
         "H" "$s2i" "$s2r"
+    s2i=$(spli "$Kstr" 1); s2r=$(spli "$Kstr" 2)
+    printf '  \033[7m %s \033[0m \033[1m%s\033[0m%s  \n' \
+        "K" "$s2i" "$s2r"
 
     printf '\n    > '
 
@@ -377,6 +394,12 @@ main () {
             ;;
             h|-h|help|--help)
                 show_help
+                if [ -z "$oneshot" ]; then
+                    read -r _
+                fi
+            ;;
+            k|-k|keybinds|--keybinds)
+                show_keybinds
                 if [ -z "$oneshot" ]; then
                     read -r _
                 fi

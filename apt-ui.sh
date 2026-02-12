@@ -67,7 +67,7 @@ apt_purge () {
             --bind='alt-k:preview-up,alt-j:preview-down' \
             --bind='pgdn:half-page-down,pgup:half-page-up' \
             --query="$input" \
-            --preview 'apt-cache show {1} '\
+            --preview 'apt-cache show {1} | fold -s -w $FZF_PREVIEW_COLUMNS'\
             --header="TAB key to (un)select. ENTER to purge. ESC to quit." | \
         awk '{print $1}'
     )"
@@ -95,7 +95,7 @@ apt_install () {
             --bind='alt-k:preview-up,alt-j:preview-down' \
             --bind='pgdn:half-page-down,pgup:half-page-up' \
             --query="$input" \
-            --preview 'apt-cache show {1} '\
+            --preview 'apt-cache show {1} | fold -s -w $FZF_PREVIEW_COLUMNS'\
             --header="TAB key to (un)select. ENTER to install. ESC to quit." | \
         awk '{print $1}'
     )"

@@ -63,8 +63,8 @@ apt_purge () {
             --select-1 --margin="4%,1%,1%,2%" \
             --inline-info \
             --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
-            --bind alt-k:preview-up \
-            --bind alt-j:preview-down \
+            --bind='ctrl-k:up,ctrl-j:down' \
+            --bind='alt-k:preview-up,alt-j:preview-down' \
             --bind='pgdn:half-page-down,pgup:half-page-up' \
             --query="$input" \
             --preview 'apt-cache show {1} '\
@@ -91,8 +91,8 @@ apt_install () {
             --select-1 --margin="4%,1%,1%,2%" \
             --inline-info \
             --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
-            --bind alt-k:preview-up \
-            --bind alt-j:preview-down \
+            --bind='ctrl-k:up,ctrl-j:down' \
+            --bind='alt-k:preview-up,alt-j:preview-down' \
             --bind='pgdn:half-page-down,pgup:half-page-up' \
             --query="$input" \
             --preview 'apt-cache show {1} '\
@@ -125,8 +125,8 @@ list_pkg_files () {
             --select-1 --margin="4%,1%,1%,2%" \
             --inline-info \
             --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
-            --bind alt-k:preview-up \
-            --bind alt-j:preview-down \
+            --bind='ctrl-k:up,ctrl-j:down' \
+            --bind='alt-k:preview-up,alt-j:preview-down' \
             --bind='pgdn:half-page-down,pgup:half-page-up' \
             --query="$input" \
             --preview 'dpkg -L {1} '\
@@ -161,8 +161,8 @@ search_pkg_by_file () {
             --select-1 --margin="4%,1%,1%,2%" \
             --inline-info \
             --preview-window='right,55%,wrap,<68(bottom,60%,wrap)' \
-            --bind alt-k:preview-up \
-            --bind alt-j:preview-down \
+            --bind='ctrl-k:up,ctrl-j:down' \
+            --bind='alt-k:preview-up,alt-j:preview-down' \
             --bind='pgdn:half-page-down,pgup:half-page-up' \
             --query="$input" \
             --preview 'dpkg -S {1} '\

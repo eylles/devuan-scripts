@@ -20,7 +20,7 @@ prog=""
 if [ -x "$prog_sys" ]; then
     prog="$prog_sys"
 fi
-if [ -x "$prog_loc" ] && [ "$0" != "$(readlink "$prog_loc")" ]; then
+if [ -x "$prog_loc" ] && [ "$(readlink "$0")" != "$(readlink "$prog_loc")" ]; then
     prog="$prog_loc"
 elif [ -x "$prog_vev" ]; then
     prog="$prog_vev"

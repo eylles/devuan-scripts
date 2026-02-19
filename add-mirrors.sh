@@ -331,7 +331,7 @@ case ${1} in
     old-stable|"${deb_otab}"|"${dev_otab}")
         distro_info
         mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-        apt_sources "stable" > /etc/apt/sources.list
+        apt_sources "old-stable" > /etc/apt/sources.list
         apt update
     ;;
     -h|-help|--help|help)

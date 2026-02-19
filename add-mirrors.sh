@@ -232,6 +232,37 @@ is_usrmerge_installed () {
     dpkg -l usrmerge | grep -q '^ii'
 }
 
+# Type: int
+# value: 0
+btrue=0
+# Type: int
+# value: 1
+bfalse=1
+
+# Return type: shell boolean
+# Usage: is_old_stable "suite"
+is_old_stable () {
+    retval=$bfalse
+    case "$1" in
+        old-stable)
+            retval=$btrue
+            ;;
+    esac
+    return $retval
+}
+
+# Usage: set_mirrors "suite"
+# Suite: old-stable, stable, testing, unstable
+set_mirrors () {
+    distro_info
+    if ! is_old_stable "$1" && ! is_usrmerge_installed; then
+        apt install usrmerge
+    fi
+    mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
+    apt_sources "$1" > /etc/apt/sources.list
+    apt update
+}
+
 configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 UserID=$(id -u)
@@ -302,37 +333,16 @@ case ${1} in
         fi
     ;;
     unstable|"${deb_unst}"|"${dev_unst}")
-        distro_info
-        if ! is_usrmerge_installed; then
-            apt install usrmerge
-        fi
-        mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-        apt_sources "unstable" > /etc/apt/sources.list
-        apt update
+        set_mirrors "unstable"
     ;;
     testing|"${deb_test}"|"${dev_test}")
-        distro_info
-        if ! is_usrmerge_installed; then
-            apt install usrmerge
-        fi
-        mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-        apt_sources "testing" > /etc/apt/sources.list
-        apt update
+        set_mirrors "testing"
     ;;
     stable|"${deb_stab}"|"${dev_stab}")
-        distro_info
-        if ! is_usrmerge_installed; then
-            apt install usrmerge
-        fi
-        mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-        apt_sources "stable" > /etc/apt/sources.list
-        apt update
+        set_mirrors "stable"
     ;;
     old-stable|"${deb_otab}"|"${dev_otab}")
-        distro_info
-        mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-        apt_sources "old-stable" > /etc/apt/sources.list
-        apt update
+        set_mirrors "old-stable"
     ;;
     -h|-help|--help|help)
         show_help

@@ -226,6 +226,12 @@ show_help () {
     printf '\t%s\n' "the default ones."
 }
 
+# Return type: shell boolean from grep
+# Usage: is_usrmerge_installed
+is_usrmerge_installed () {
+    dpkg -l usrmerge | grep -q '^ii'
+}
+
 configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 UserID=$(id -u)
@@ -297,21 +303,27 @@ case ${1} in
     ;;
     unstable|"${deb_unst}"|"${dev_unst}")
         distro_info
-        apt install usrmerge
+        if ! is_usrmerge_installed; then
+            apt install usrmerge
+        fi
         mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
         apt_sources "unstable" > /etc/apt/sources.list
         apt update
     ;;
     testing|"${deb_test}"|"${dev_test}")
         distro_info
-        apt install usrmerge
+        if ! is_usrmerge_installed; then
+            apt install usrmerge
+        fi
         mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
         apt_sources "testing" > /etc/apt/sources.list
         apt update
     ;;
     stable|"${deb_stab}"|"${dev_stab}")
         distro_info
-        apt install usrmerge
+        if ! is_usrmerge_installed; then
+            apt install usrmerge
+        fi
         mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
         apt_sources "stable" > /etc/apt/sources.list
         apt update

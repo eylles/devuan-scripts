@@ -180,9 +180,9 @@ apt_sources () {
             suite=old-stable
         ;;
     esac
-    echo "############################"
-    printf '# %s %9s %s #\n' "${distro_type}" "${suite}" "sources"
-    echo "############################"
+    echo "#############################"
+    printf '# %s %10s %s #\n' "${distro_type}" "${suite}" "sources"
+    echo "#############################"
     echo
     for mirror in ${urls}; do
         print_deb_url "$mirror" "$suite"

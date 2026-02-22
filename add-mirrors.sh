@@ -254,13 +254,27 @@ is_old_stable () {
 # Usage: set_mirrors "suite"
 # Suite: old-stable, stable, testing, unstable
 set_mirrors () {
+    suite="$1"
+    debug="$2"
     distro_info
-    if ! is_old_stable "$1" && ! is_usrmerge_installed; then
-        apt install usrmerge
+    if [ -n "$debug" ]; then
+        printf '%s\n' "the following settings will be applied:"
     fi
-    mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-    apt_sources "$1" > /etc/apt/sources.list
-    apt update
+    if ! is_old_stable "$suite" && ! is_usrmerge_installed; then
+        if [ -n "$debug" ]; then
+            printf '%s\n' "apt: install usrmerge"
+        else
+            apt install usrmerge
+        fi
+    fi
+    if [ -n "$debug" ]; then
+        printf '%s\n' "apt sources: ${suite} suite"
+        apt_sources "$suite"
+    else
+        mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
+        apt_sources "$suite" > /etc/apt/sources.list
+        apt update
+    fi
 }
 
 configdir="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -293,31 +307,16 @@ case ${1} in
         if [ -n "${2}" ]; then
             case ${2} in
                 unstable|"${deb_unst}"|"${dev_unst}")
-                    distro_info
-                    echo "the following settings will be applied:"
-                    printf '%s\n' "apt: install usrmerge"
-                    printf '%s\n' "apt sources: ${2} suite"
-                    apt_sources "unstable"
+                    set_mirrors "unstable" "debug"
                 ;;
                 testing|"${deb_test}"|"${dev_test}")
-                    distro_info
-                    echo "the following settings will be applied:"
-                    printf '%s\n' "apt: install usrmerge"
-                    printf '%s\n' "apt sources: ${2} suite"
-                    apt_sources "testing"
+                    set_mirrors "testing" "debug"
                 ;;
                 stable|"${deb_stab}"|"${dev_stab}")
-                    distro_info
-                    echo "the following settings will be applied:"
-                    printf '%s\n' "apt: install usrmerge"
-                    printf '%s\n' "apt sources: ${2} suite"
-                    apt_sources "stable"
+                    set_mirrors "stable" "debug"
                 ;;
                 old-stable|"${deb_otab}"|"${dev_otab}")
-                    distro_info
-                    echo "the following settings will be applied:"
-                    printf '%s\n' "apt sources: ${2} suite"
-                    apt_sources "old-stable"
+                    set_mirrors "old-stable" "debug"
                 ;;
                 *)
                     printf '%s' "no valid suite chosen, choose from the current"

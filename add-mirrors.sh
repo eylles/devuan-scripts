@@ -319,8 +319,8 @@ case ${1} in
                     set_mirrors "old-stable" "debug"
                 ;;
                 *)
-                    printf '%s' "no valid suite chosen, choose from the current"
-                    printf '%s\n' "stable, testing or unstable suites!"
+                    printf '%s' "no valid suite chosen, choose from the current "
+                    printf '%s\n' "old-stable, stable, testing or unstable suites!"
                     show_help
                     exit 1
                 ;;
@@ -347,7 +347,7 @@ case ${1} in
         show_help
     ;;
     *)
-        echo "no option chosen, send debug or suite (stable, testing, unstable)."
+        echo "no option chosen, choose debug or suite (old-stable, stable, testing, unstable)."
         echo "check the help section with either 'help' '-h' '--help' '-help'"
         show_usage
         exit 1

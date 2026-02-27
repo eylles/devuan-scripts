@@ -163,8 +163,59 @@ print_deb_url () {
     esac
 }
 
-# Usage: apt_sources "suite"
+# Usage: printstanza "domain" "suite" suffixes
+# Examples:
+#   domain: deb.debian.org
+#   suite:  bookworm
+#   suffixes: backports security
+printstanza () {
+    # domain
+    d="${1}"
+    shift
+    # suite
+    s="${1}"
+    shift
+    suites="${s}"
+    while [ "$#" -gt 0 ]; do
+        suites="${suites} ${s}-${1}"
+        shift
+    done
+    printf '%s: %s\n' "Types" "deb deb-src"
+    printf '%s: %s\n' "URIs" "http://${d}/${archive}"
+    printf '%s: %s\n' "Suites" "${suites}"
+    printf '%s: %s\n' "Components" "main contrib non-free non-free-firmware"
+    printf '%s: %s\n' "Signed-By" "/usr/share/keyrings/${distro_type}-archive-keyring.gpg"
+    printf '\n'
+
+}
+
+# Usage: print_deb_stanza "$mirror" "$suite"
+# Suite: stable, testing, unstable, old-stable
+# Mirror: deb mirror url like: deb.devuan.org
+print_deb_stanza () {
+    case ${2} in
+        unstable)
+            printf '%s\n' "# mirror ${1}"
+            printstanza "${1}" "${u_unst}"
+        ;;
+        testing)
+            printf '%s\n' "# mirror ${1}"
+            printstanza "${1}" "${u_test}"
+        ;;
+        stable)
+            printf '%s\n' "# mirror ${1}"
+            printstanza "${1}" "${u_stab}" "security" "updates" "proposed-updates" "backports"
+        ;;
+        old-stable)
+            printf '%s\n' "# mirror ${1}"
+            printstanza "${1}" "${u_otab}" "security" "updates" "backports"
+        ;;
+    esac
+}
+
+# Usage: apt_sources "suite" "type"
 # Suite: old-stable, stable, testing, unstable
+# Type:  traditional, modern
 apt_sources () {
     case ${1} in
         unstable)
@@ -185,7 +236,14 @@ apt_sources () {
     echo "#############################"
     echo
     for mirror in ${urls}; do
-        print_deb_url "$mirror" "$suite"
+        case "$2" in
+            "modern")
+                print_deb_stanza "$mirror" "$suite"
+                ;;
+            *)
+                print_deb_url "$mirror" "$suite"
+                ;;
+        esac
     done
 }
 

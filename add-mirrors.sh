@@ -334,6 +334,32 @@ is_old_stable () {
     return $retval
 }
 
+# Usage: show_sources "suite"
+# Suite: old-stable, stable, testing, unstable
+show_sources () {
+    suite="$1"
+    shift
+    apt_sources "$suite"
+    if is_true_string "$add_modern_sources"; then
+        apt_sources "$suite" "modern"
+    fi
+}
+
+# Usage: write_sources "suite"
+# Suite: old-stable, stable, testing, unstable
+write_sources () {
+    suite="$1"
+    shift
+    t_sources="/etc/apt/sources.list"
+    mv "$t_sources" "${t_sources}.bak"
+    apt_sources "$suite" > "$t_sources"
+    if is_true_string "$add_modern_sources"; then
+        m_sources="/etc/apt/sources.list.d/${distro_type}.sources"
+        mv "$m_sources" "${m_sources}.bak"
+        apt_sources "$suite" "modern" > "$m_sources"
+    fi
+}
+
 # Usage: set_sources "action" "suite"
 # Action: show, write
 # Suite: old-stable, stable, testing, unstable
@@ -344,19 +370,10 @@ set_sources () {
     shift
     case "$action" in
         show)
-            apt_sources "$suite"
-            if is_true_string "$add_modern_sources"; then
-                apt_sources "$suite" "modern"
-            fi
+            show_sources "$suite"
             ;;
         write)
-            mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
-            apt_sources "$suite" > /etc/apt/sources.list
-            if is_true_string "$add_modern_sources"; then
-                mv "/etc/apt/sources.list.d/${distro_type}.sources" \
-                    "/etc/apt/sources.list.d/${distro_type}.sources.bak"
-                apt_sources "$suite" "modern" > "/etc/apt/sources.list.d/${distro_type}.sources"
-            fi
+            write_sources "$suite"
             ;;
     esac
 

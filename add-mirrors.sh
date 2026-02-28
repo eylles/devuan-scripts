@@ -47,6 +47,32 @@ distro_info () {
     printf '\n'
 }
 
+# Type: int
+# value: 0
+btrue=0
+# Type: int
+# value: 1
+bfalse=1
+
+add_modern_sources=""
+
+# return type: int
+# usage: is_true_string "string"
+is_true_string () {
+    if [ -z "$1" ]; then
+        return $bfalse
+    else
+        case "$1" in
+            [Yy][Ee][Ss]|[Tt][Rr][Uu][Ee])
+                return $btrue
+                ;;
+            [Nn][Oo]|[Ff][Aa][Ll][Ss][Ee])
+                return $bfalse
+                ;;
+        esac
+    fi
+}
+
 ######################
 # devuan suite names #
 ######################
@@ -289,13 +315,6 @@ show_help () {
 is_usrmerge_installed () {
     dpkg -l usrmerge | grep -q '^ii'
 }
-
-# Type: int
-# value: 0
-btrue=0
-# Type: int
-# value: 1
-bfalse=1
 
 # Return type: shell boolean
 # Usage: is_old_stable "suite"

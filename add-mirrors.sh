@@ -347,9 +347,17 @@ set_mirrors () {
     if [ -n "$debug" ]; then
         printf '%s\n' "apt sources: ${suite} suite"
         apt_sources "$suite"
+        if is_true_string "$add_modern_sources"; then
+            apt_sources "$suite" "modern"
+        fi
     else
         mv /etc/apt/sources.list /etc/apt/sources.list.stable.bak
         apt_sources "$suite" > /etc/apt/sources.list
+        if is_true_string "$add_modern_sources"; then
+            mv "/etc/apt/sources.list.d/${distro_type}.sources" \
+                "/etc/apt/sources.list.d/${distro_type}.sources.bak"
+            apt_sources "$suite" "modern" > "/etc/apt/sources.list.d/${distro_type}.sources"
+        fi
         apt update
     fi
 }

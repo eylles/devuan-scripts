@@ -308,6 +308,12 @@ show_help () {
     printf '\t\t%s\n' "urls=\"\${urls} deb.devuan.org\""
     printf '\t%s\n' "this way the script can simply append your configured mirror urls to"
     printf '\t%s\n' "the default ones."
+    printf '\n'
+    printf '\t%s\n' "by default only traditional one line sources are added:"
+    printf '\t%s\n' "to also add modern DEB822 sources along your traditional"
+    printf '\t%s\n' "sources edit your mirrors config file and set the variable"
+    printf '\t\t%s\n' "add_modern_sources"
+    printf '\t%s\n' "to true like so: 'add_modern_sources=true'"
 }
 
 # Return type: shell boolean from grep

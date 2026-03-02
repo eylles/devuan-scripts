@@ -54,6 +54,11 @@ btrue=0
 # value: 1
 bfalse=1
 
+# which type of sources should we generate
+# available: traditional, modern, both
+sources_type="traditional"
+
+add_traditional_sources=""
 add_modern_sources=""
 
 # return type: int
@@ -312,8 +317,10 @@ show_help () {
     printf '\t%s\n' "by default only traditional one line sources are added:"
     printf '\t%s\n' "to also add modern DEB822 sources along your traditional"
     printf '\t%s\n' "sources edit your mirrors config file and set the variable"
-    printf '\t\t%s\n' "add_modern_sources"
-    printf '\t%s\n' "to true like so: 'add_modern_sources=true'"
+    printf '\t\t%s\n' "sources_type"
+    printf '\t%s\n' "to true like so: 'sources_type=both'"
+    printf '\t%s\n' "the supported values are: traditional, modern and both"
+    printf '\t%s\n' "if unset or set to an unsupported value we fallback to traditional"
 }
 
 # Return type: shell boolean from grep
@@ -339,7 +346,9 @@ is_old_stable () {
 show_sources () {
     suite="$1"
     shift
-    apt_sources "$suite"
+    if is_true_string "$add_traditional_sources"; then
+        apt_sources "$suite"
+    fi
     if is_true_string "$add_modern_sources"; then
         apt_sources "$suite" "modern"
     fi
@@ -351,11 +360,17 @@ write_sources () {
     suite="$1"
     shift
     t_sources="/etc/apt/sources.list"
-    mv "$t_sources" "${t_sources}.bak"
-    apt_sources "$suite" > "$t_sources"
-    if is_true_string "$add_modern_sources"; then
-        m_sources="/etc/apt/sources.list.d/${distro_type}.sources"
+    if [ -f "$t_sources" ]; then
+        mv "$t_sources" "${t_sources}.bak"
+    fi
+    if is_true_string "$add_traditional_sources"; then
+        apt_sources "$suite" > "$t_sources"
+    fi
+    m_sources="/etc/apt/sources.list.d/${distro_type}.sources"
+    if [ -f "$m_sources" ]; then
         mv "$m_sources" "${m_sources}.bak"
+    fi
+    if is_true_string "$add_modern_sources"; then
         apt_sources "$suite" "modern" > "$m_sources"
     fi
 }
@@ -428,6 +443,23 @@ if [ -f "$usemirrors" ]; then
     # if the user wrote something bad it is his problem~~
     . "$usemirrors"
 fi
+
+case "$sources_type" in
+    traditional)
+        add_traditional_sources="true"
+        ;;
+    modern)
+        add_modern_sources="true"
+        ;;
+    both)
+        add_traditional_sources="true"
+        add_modern_sources="true"
+        ;;
+    *)
+        # fallback
+        add_traditional_sources="true"
+        ;;
+esac
 
 case ${1} in
     debug)

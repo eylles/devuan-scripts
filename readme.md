@@ -9,6 +9,7 @@ These are assorted scripts i use on devuan, the scripts span the following cathe
 | [installer-scripts](scripts/installer-scripts) | Scripts to install packages not in debian/devuan |
 | [tweaks](scripts/tweaks) | Scripts to tweak system settings |
 | [wrappers](scripts/wrappers) | Scripts to wrap some commands. |
+| [initscripts](scripts/initscripts) | InitScripts for sysvinit. |
 
 
 mirrors

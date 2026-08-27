@@ -99,7 +99,6 @@ do_start() {
             machine_id_gen "$RunMachineID"
         fi
         log_end_msg 0
-
     else
         log_daemon_msg "Checking persistent static machine-id" "$NAME"
 

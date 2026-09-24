@@ -410,7 +410,7 @@ set_mirrors () {
         fi
     fi
     if [ -n "$debug" ]; then
-        printf '%s\n' "apt sources: ${suite} suite"
+        printf '%s\n\n' "apt sources: ${suite} suite"
         set_sources "show" "$suite"
     else
         set_sources "write" "$suite"

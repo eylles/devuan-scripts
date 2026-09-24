@@ -160,13 +160,13 @@ printurl () {
     fi
     printf '%s\n'     "deb http://${d}/${archive} ${s}${u} main contrib non-free non-free-firmware"
     printf '%s\n' "deb-src http://${d}/${archive} ${s}${u} main contrib non-free non-free-firmware"
-    printf '\n'
 }
 
 # Usage: print_deb_url "$mirror" "$suite"
 # Suite: stable, testing, unstable
 # Mirror: deb mirror url like: deb.devuan.org
 print_deb_url () {
+    printf '\n'
     case ${2} in
         unstable)
             printf '%s\n' "# mirror ${1}"
@@ -216,7 +216,6 @@ printstanza () {
     printf '%s: %s\n' "Suites" "${suites}"
     printf '%s: %s\n' "Components" "main contrib non-free non-free-firmware"
     printf '%s: %s\n' "Signed-By" "/usr/share/keyrings/${distro_type}-archive-keyring.gpg"
-    printf '\n'
 
 }
 
@@ -224,6 +223,7 @@ printstanza () {
 # Suite: stable, testing, unstable, old-stable
 # Mirror: deb mirror url like: deb.devuan.org
 print_deb_stanza () {
+    printf '\n'
     case ${2} in
         unstable)
             printf '%s\n' "# mirror ${1}"
@@ -265,7 +265,6 @@ apt_sources () {
     echo "#############################"
     printf '# %s %10s %s #\n' "${distro_type}" "${suite}" "sources"
     echo "#############################"
-    echo
     for mirror in ${urls}; do
         case "$2" in
             "modern")
